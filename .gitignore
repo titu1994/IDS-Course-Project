@@ -1,11 +1,9 @@
-# Cleaned datasets
+# datasets
 datasets/*
+raw/*
 
 # Staging area raw files (Add more subfolders if needed)
-staging/raw/*
-
-# Serialized models
-models/*
+stagint/models/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
