@@ -1,5 +1,17 @@
 # IDS-Course-Project
 
+## Deliverables
+
+| Date  | Task to Deliver  |
+| ------|:----------------:|
+| 2/08	| Team names, team members, website URL and git repository URLs |
+| 2/15  | Report 1 - Preliminary report containing results of discovery (1000 ± 50 words) |
+| 3/01	| Report 2 - Overview of technical approach and high-level design (1000 ± 50 words) |
+| 3/29	| Manual reference datasets |
+| 4/12	| Fully functional application, a README.txt containing the information about how to run your code, and a file containing data results |
+| 4/26	| Website and Video. Slides for in-class presentation |
+| 5/03	| Report 3 - Final project report describing technical approach, analyses, and results (2000 ± 100 words). Self and peer evaluations along with specific contributions of each team member |
+
 # Tasks
 
 ### Implementation: Use Python or Java. Python is recommended.
