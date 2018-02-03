@@ -6,9 +6,9 @@ relative_permalinks: true
 
 # Setup
 title:               Introduction to Data Science
-tagline:             'Course Project Website'
+tagline:             ''
 description:         'Course Project Website'
-url:                 http://titu1994.github.io
+url:                 https://titu1994.github.io
 baseurl:             '/IDS-Course-Project'
 paginate:            5
 
