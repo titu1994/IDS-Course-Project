@@ -92,9 +92,9 @@ Does having a liquor license influence crime incidents in the neighborhood?
 / will refer to the root of the repo, just as in Linux and contain the final few master scripts that will call scripts from /staging/*. Dont put anything there for now.
 
 ### The main directories in / are going to be /raw, /datasets and /staging.
-/raw = store your temporary datasets here. These have to be cleaned, modified and standardized by scripts in /staging/* to get inside the clean /datasets
-/datasets = stores only clean data which can directly be used by /staging
-/models = stores the trained serialized models from /staging
+- /raw = store your temporary datasets here. These have to be cleaned, modified and standardized by scripts in /staging/* to get inside the clean /datasets
+- /datasets = stores only clean data which can directly be used by /staging
+- /models = stores the trained serialized models from /staging
 
 ### /staging = the main directory where most of the scripts will be.
 Its divided into lots of components for now, we can add or remove later as needed.
@@ -110,5 +110,7 @@ These scripts will use the /staging/ml, /staging/preprocessing, /staging/utils t
 
 ### Since the data (from /raw and /datasets) is seperated from the scripts that call them (/staging), you need to be careful in how you load and save datasets. Ive added path hints inside the readme.md of each major subdirectory, so it shouldnt be too much of a problem.
 
-Be careful how many dots you put. In the /staging/ml directory, to load the datasets would normally require the path ".../datasets/". But since you will not access the datasets directly, but instead call the /staging/ml scripts from /staging, you need to use "../datasets/" to refer to the datasets.
+Be careful how many dots you put. In the /staging/ml directory, to load the datasets would normally require the path ".../datasets/". 
+
+But since you will not access the datasets directly, but instead call the /staging/ml scripts from /staging, you need to use "../datasets/" to refer to the datasets.
 
