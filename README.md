@@ -91,13 +91,15 @@ Does having a liquor license influence crime incidents in the neighborhood?
 ### Structure is as follows : 
 / will refer to the root of the repo, just as in Linux and contain the final few master scripts that will call scripts from /staging/*. Dont put anything there for now.
 
-### The main directories in / are going to be /raw, /datasets and /staging.
-- /raw = store your temporary datasets here. These have to be cleaned, modified and standardized by scripts in /staging/* to get inside the clean /datasets
-- /datasets = stores only clean data which can directly be used by /staging
-- /models = stores the trained serialized models from /staging
+### The main directory in / is going to be /staging.
 
 ### /staging = the main directory where most of the scripts will be.
 Its divided into lots of components for now, we can add or remove later as needed.
+
+#### Inside /staging, there is a /staging/data where all the files will be stored. It contains 3 main folders :
+- /staging/data/raw = store your temporary datasets here. These have to be cleaned, modified and standardized by scripts in /staging/* to get inside the clean /datasets
+- /staging/data/datasets = stores only clean data which can directly be used by /staging
+- /staging/data/models = stores the trained serialized models from /staging
 
 #### Inside /staging root, only scripts which call upon imports from /staging/* will be kept in the root. 
 These scripts will use the /staging/ml, /staging/preprocessing, /staging/utils to scrape websites, download data, store in /raw temporarily, clean data and store in /datasets, apply ml algos and store the trained models in /models
@@ -108,9 +110,5 @@ These scripts will use the /staging/ml, /staging/preprocessing, /staging/utils t
 
 ##### Inside /staging/preprocessing we can put scripts that may be needed by /staging to clean up datasets from /raw and then save into /datasets
 
-### Since the data (from /raw and /datasets) is seperated from the scripts that call them (/staging), you need to be careful in how you load and save datasets. Ive added path hints inside the readme.md of each major subdirectory, so it shouldnt be too much of a problem.
-
-Be careful how many dots you put. In the /staging/ml directory, to load the datasets would normally require the path ".../datasets/". 
-
-But since you will not access the datasets directly, but instead call the /staging/ml scripts from /staging, you need to use "../datasets/" to refer to the datasets.
-
+**Note** : **Always** use the method `resolve_data_path(path)` for access to data inside /staging/data/*.
+If you try direct access it will cause errors when we create the final scripts.
