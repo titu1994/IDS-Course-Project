@@ -1,0 +1,1 @@
+Contains the utility scripts needed for training or evaluating the models and general utilities for the application

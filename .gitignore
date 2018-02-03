@@ -1,3 +1,12 @@
+# Cleaned datasets
+datasets/*
+
+# Staging area raw files (Add more subfolders if needed)
+staging/raw/*
+
+# Serialized models
+models/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -99,6 +108,3 @@ ENV/
 
 # mypy
 .mypy_cache/
-
-# Local files
-datasets/*
