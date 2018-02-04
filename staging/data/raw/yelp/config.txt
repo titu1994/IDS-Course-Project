@@ -1,0 +1,9 @@
+scrapy crawl yelpscraper -a search="restaurants" -a location="60607" -o yelp_60607.json
+
+scrapy crawl yelpscraper -a search="restaurants" -a location="Chicago, IL 60607" -o yelp_60607_full.json
+
+scrapy crawl yelpscraper -a search="bar" -a location="60607" -o yelp_60607_bar.json
+
+scrapy crawl yelpscraper -a search="bar" -a location="Chicago, IL 60607" -o yelp_full_60607_bar.json
+
+

@@ -1,6 +1,5 @@
 # datasets
-datasets/*
-raw/*
+staging/data/*
 
 # Staging area raw files (Add more subfolders if needed)
 stagint/models/*

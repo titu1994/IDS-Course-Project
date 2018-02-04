@@ -1,0 +1,2 @@
+External Sources
+-   https://github.com/RavenHustler/yelpscraper - Open Source Yelp reviews scraper tool using Scrapy to get review data.
