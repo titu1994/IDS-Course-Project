@@ -14,3 +14,10 @@ def resolve_data_path(path):
     else:
         raise ValueError("File not found ! Seached %s and %s" % (path1, path2))
 
+
+def construct_data_path(filename):
+    if 'staging' in os.getcwd():
+        path = '../data/' + filename
+    else:
+        path = '/staging/data/' + filename
+    return path

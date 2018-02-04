@@ -110,5 +110,13 @@ These scripts will use the /staging/ml, /staging/preprocessing, /staging/utils t
 
 ##### Inside /staging/preprocessing we can put scripts that may be needed by /staging to clean up datasets from /raw and then save into /datasets
 
-**Note** : **Always** use the method `resolve_data_path(path)` for access to data inside /staging/data/*.
+**Note** : **Always** use the method `resolve_data_path(path)` for read access to data inside /staging/data/*.
 If you try direct access it will cause errors when we create the final scripts.
+
+To use this function, directly use resolve_data_path('raw/{name}') or resolve_data_path('models/{name}') or resolve_data_path('datasets/{name}')
+
+**Note** : **Always** use the method `construct_data_path(filename)` for write access to data inside /staging/data/*.
+If you try direct access it will cause errors when we create the final scripts.
+
+To use this function, directly use construct_data_path('raw/{name}') or resolve_data_path('models/{name}') or resolve_data_path('datasets/{name}')
+
