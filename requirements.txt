@@ -3,3 +3,6 @@ scipy
 pandas
 scikit-learn
 scrapy
+scrapy-beautifulsoup
+html5lib
+

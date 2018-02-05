@@ -1,2 +1,9 @@
 External Sources
 -   https://github.com/RavenHustler/yelpscraper - Open Source Yelp reviews scraper tool using Scrapy to get review data.
+-   Scraping resources
+    -   Official Scrappy Docs (to parse multiple pages): https://doc.scrapy.org/en/latest/topics/request-response.html
+    -   Generating random user agents for Scrapy: http://tangww.com/2013/06/UsingRandomAgent/
+    -   Blogpost on how to scrape websites with complex measures against scraping: https://blog.scrapinghub.com/2017/07/07/scraping-the-steam-game-store-with-scrapy/
+    -   Scraping names and spaces without any other character: https://stackoverflow.com/questions/2779453/python-strip-everything-but-spaces-and-alphanumeric
+    -   Removing \xa0 (unicode ' ') and normalizing unicode: https://stackoverflow.com/questions/10993612/python-removing-xa0-from-string
+    -

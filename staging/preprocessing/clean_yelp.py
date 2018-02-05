@@ -1,10 +1,13 @@
 import pandas as pd
 import numpy as np
+import re
 
 from staging.utils.generic_utils import resolve_data_path, construct_data_path
 
 basepath = "raw/yelp/"
 pin_codes = list(range(60601, 60608, 1))
+# Ref: https://stackoverflow.com/questions/2779453/python-strip-everything-but-spaces-and-alphanumeric
+clean_name_pattern = re.compile(r'([^\s\w]|_)+')
 
 fmt1 = basepath + "yelp_%d.json"
 fmt2 = basepath + "yelp_%d_bar.json"
@@ -22,6 +25,19 @@ for pincode in pin_codes:
     restaurants_full.append(resolve_data_path(fmt3 % pincode))
     bar_partial.append(resolve_data_path(fmt4 % pincode))
 
+def clean_name(df):
+    name = df['Name']
+    name = clean_name_pattern.sub('', name)
+    words = name.split()
+
+    clean_name = []
+    for word in words:
+        word = clean_name_pattern.sub('', word)
+        clean_name.append(word)
+
+    clean_name = ' '.join(clean_name)
+    return clean_name
+
 def clean_reviews(review):
     try:
         x = int(review)
@@ -34,11 +50,10 @@ price_map = {'$': 1, '$$': 2, '$$$': 3, '$$$$': 4, 'x': 0}
 def clean_price(df):
     val = df['Price']
 
-    if type(val) == list:
-        if len(val) < 1:
-            val = 'x'
-        else:
-            val = val[0]
+    if len(val) < 1:
+        val = 'x'
+    else:
+        val = val[0]
 
     val = price_map[val]
     return val
@@ -46,6 +61,14 @@ def clean_price(df):
 def get_pin_code(df):
     address = df['Address']
     pincode = address[-5:]
+    if len(pincode) < 1:
+        return np.nan
+
+    try:
+        pincode = int(pincode)
+    except:
+        return np.nan
+
     return pincode
 
 dataframe_list = []
@@ -54,11 +77,20 @@ dataframe_list = []
 def load_dataframe(file, alcohol=0):
     df = pd.read_json(file)  # type: pd.DataFrame
     df['Address'] = df['Address'].astype(np.str)
+    df['Name'] = df.apply(clean_name, axis=1).astype(np.str)
     df['Category'] = df['Category'].astype(np.str)
     df['Price'] = df.apply(clean_price, axis=1)  #
     df['Reviews'] = df['Reviews'].apply(clean_reviews)
     df['Alcohol'] = alcohol
     df['Pincode'] = df.apply(get_pin_code, axis=1)
+
+    df = df.dropna()
+
+    pins = df['Pincode'].isin(pin_codes)
+    df['Pincode'] = df.Pincode.loc[pins == True]
+    df = df.dropna()
+
+    df['Pincode'] = df['Pincode'].astype(np.int)
 
     print(df.info())
     print(df.head(5))
@@ -95,3 +127,6 @@ print(df.head())
 
 save_path = construct_data_path('datasets/yelp_ratings.csv')
 df.to_csv(save_path, index=True, index_label='id', header=True, encoding='utf-8')
+
+names = df['Name'].values
+print('\n\n,', names.tolist())
