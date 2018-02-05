@@ -4,6 +4,9 @@ staging/data/*
 # Staging area raw files (Add more subfolders if needed)
 stagint/models/*
 
+# external data
+external/yelp_reviews/.scrapy/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
