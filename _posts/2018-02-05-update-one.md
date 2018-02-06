@@ -6,7 +6,7 @@ title: Project Aletheia
 
 # Group Members:
 
-1.  Aamlaan
+1.  Amlaan Bhoi (abhoi)
 2.  Somshubra Majumdar (smajum6)
 3.  Debojit Kaushik
 4.  Christopher Alphones
