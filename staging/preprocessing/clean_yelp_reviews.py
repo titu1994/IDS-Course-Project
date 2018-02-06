@@ -156,8 +156,10 @@ loaded_restaurants = set(names.tolist())
 all_restaurants = set(restaurant_names)
 restaurants_remaining = all_restaurants - loaded_restaurants
 print('Number of restaurants remaining:', len(list(restaurants_remaining)))
+
+print()
 print(list(restaurants_remaining))
 
 # store full dataset
 path = construct_data_path('datasets/yelp_reviews.csv')
-df.to_csv(path, header=True, index=True, encoding='utf-8')
+df.to_csv(path, header=True, index=True, encoding='utf-8', index_label='id')
