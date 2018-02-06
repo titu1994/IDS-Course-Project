@@ -25,7 +25,7 @@ DOWNLOADER_MIDDLEWARES = {
         'yelp_reviews.comm.rotate_useragent.RotateUserAgentMiddleware' :400
     }
 
-BEAUTIFULSOUP_PARSER = "lxml"
+BEAUTIFULSOUP_PARSER = "html5lib"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
