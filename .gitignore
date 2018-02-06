@@ -5,6 +5,7 @@ staging/data/*
 stagint/models/*
 
 # external data
+external/**/*.json
 external/yelp_reviews/.scrapy/*
 
 # Byte-compiled / optimized / DLL files
