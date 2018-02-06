@@ -9,7 +9,7 @@ title: Project Aletheia
 1.  Aamlaan
 2.  Somshubra Majumdar (smajum6)
 3.  Debojit Kaushik
-4.  Christopher Alphones 
+4.  Christopher Alphones
 
 # Important Links
 
