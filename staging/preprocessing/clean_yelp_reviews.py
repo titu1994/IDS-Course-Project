@@ -136,18 +136,28 @@ restaurant_names = restaurant_names_temp
 
 basepath = "raw/yelp-reviews/yelp_reviews.json"
 path = resolve_data_path(basepath)
+df1 = pd.read_json(path)  # type: pd.DataFrame
 
-df = pd.read_json(path)  # type: pd.DataFrame
+basepath = "raw/yelp-reviews/yelp_reviews_remaining.json"
+path = resolve_data_path(basepath)
+df2 = pd.read_json(path)  # type: pd.DataFrame
+
+dataframes = [df1, df2]
+df = pd.concat(dataframes)  # type: pd.DataFrame
+print(df.info())
+print(df.head())
+print()
 
 names = df.restaurant_name.values
 names = np.unique(names)
+print('Number of unique restaurants with reviews:', len(names))
 
-print('Number of unique restaurants with reviews:', len(names), '\n')
 loaded_restaurants = set(names.tolist())
 all_restaurants = set(restaurant_names)
-
 restaurants_remaining = all_restaurants - loaded_restaurants
-
-print()
-print('number of restaurants remaining:', len(list(restaurants_remaining)))
+print('Number of restaurants remaining:', len(list(restaurants_remaining)))
 print(list(restaurants_remaining))
+
+# store full dataset
+path = construct_data_path('datasets/yelp_reviews.csv')
+df.to_csv(path, header=True, index=True, encoding='utf-8')
