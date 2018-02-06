@@ -142,11 +142,12 @@ df = pd.read_json(path)  # type: pd.DataFrame
 names = df.restaurant_name.values
 names = np.unique(names)
 
-print('nb unique restaurants :', len(names), '\n')
+print('Number of unique restaurants with reviews:', len(names), '\n')
 loaded_restaurants = set(names.tolist())
 all_restaurants = set(restaurant_names)
 
 restaurants_remaining = all_restaurants - loaded_restaurants
 
-print(list(restaurants_remaining))
+print()
 print('number of restaurants remaining:', len(list(restaurants_remaining)))
+print(list(restaurants_remaining))
