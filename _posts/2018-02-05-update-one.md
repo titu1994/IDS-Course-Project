@@ -7,7 +7,7 @@ title: Project Aletheia
 # Group Members:
 
 1.  Aamlaan
-2.  Somshubra Majumdar (smajum6@uic.edu)
+2.  Somshubra Majumdar (smajum6)
 3.  Debojit Kaushik
 4.  Cristopher
 
