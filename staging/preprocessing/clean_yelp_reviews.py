@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import re
 
-from staging.utils.generic_utils import resolve_data_path, construct_data_path
+from staging import resolve_data_path, construct_data_path
 
 restaurant_names = ['The Dearborn', 'Stock and Ledger', 'Remingtons', 'Roanoke Restaurant', 'The Gage', 'The Marq',
                     'MingHin Cuisine', 'Nandos PERiPERi', 'Cochon Volant Brasserie', 'Green Apple PHOever',

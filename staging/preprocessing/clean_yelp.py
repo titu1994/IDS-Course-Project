@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import re
 
-from staging.utils.generic_utils import resolve_data_path, construct_data_path
+from staging import construct_data_path, resolve_data_path
 
 basepath = "raw/yelp/"
 pin_codes = list(range(60601, 60608, 1))

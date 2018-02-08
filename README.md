@@ -120,3 +120,18 @@ If you try direct access it will cause errors when we create the final scripts.
 
 To use this function, directly use construct_data_path('raw/{name}') or resolve_data_path('models/{name}') or resolve_data_path('datasets/{name}')
 
+##### Code to access the above data methods
+
+```python
+from staging import resolve_data_path, construct_data_path
+
+# to load a file
+input_file_path = resolve_data_path("['raw', 'datasets', 'models']/['actual file name.extension']")
+with open(input_file_path, 'r') as f:
+    ...
+
+# to save a file
+output_file_path = construct_data_path("['raw', 'datasets', 'models']/['actual file name.extension']")
+with open(input_file_path, 'w') as f:
+    ...
+```
