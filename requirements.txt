@@ -4,5 +4,5 @@ pandas
 scikit-learn
 scrapy
 scrapy-beautifulsoup
+beautifulsoup4
 html5lib
-
