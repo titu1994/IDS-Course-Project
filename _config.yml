@@ -12,9 +12,9 @@ baseurl:             '/IDS-Course-Project'
 paginate:            5
 
 pages_list:
-  About: '/IDS-Course-Project/about'
-  Archive: '/IDS-Course-Project/archive'
-  Feed: '/atom.xml'
+  About: 'https://titu1994.github.io/IDS-Course-Project/about'
+  Archive: 'https://titu1994.github.io/IDS-Course-Project/archive'
+  Feed: 'https://titu1994.github.io/IDS-Course-Project/atom.xml'
 
 
 # About/contact
