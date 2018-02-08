@@ -2,6 +2,8 @@
 
 ## Deliverables
 
+[CS 418 Project Website](http://cs418.cs.uic.edu/project.html)
+
 | Date  | Task to Deliver  |
 | ------|:----------------:|
 | 2/08	| Team names, team members, website URL and git repository URLs |
