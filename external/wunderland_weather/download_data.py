@@ -1,5 +1,6 @@
 import requests
 import csv
+import time
 from datetime import date, timedelta
 
 # Variables
@@ -34,7 +35,12 @@ with open(outPath, 'a+', newline='') as csvfile:
         ["datetime", "tempm", "tempi", "dewptm", "dewpti", "hum", "wspdm", "wspdi", "wgustm", "wgusti", "wdird",
          "wdire", "vism", "visi", "pressurem", "pressurei", "windchillm", "windchilli", "heatindexm", "heatindexi",
          "precipm", "precipi", "conds", "fog", "rain", "snow", "hail", "thunder", "tornado"])
-    for day in dates:
+
+    for i, day in enumerate(dates):
+        if (i + 1) % 10 == 0:
+            print("Sleeping for 1 minute to avoid excess API calls")
+            time.sleep(65)
+
         r = requests.get(
             'http://api.wunderground.com/api/' + api + '/history_' + day + '/q/' + station + '.json')
         data = r.json()['history']['observations']
