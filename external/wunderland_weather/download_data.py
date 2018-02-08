@@ -22,7 +22,7 @@ finish_date = dates[-1]
 print("End Date : ", finish_date)
 
 outPath = '%s-%s.csv' % (begin_date, finish_date)  # output path
-station = 'KDEW'  # weather station ID
+station = 'KMDW'  # weather station ID
 api = _PRIVATE_KEY  # developer API key
 
 # Create list of dates between start and end
