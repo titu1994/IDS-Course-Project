@@ -7,8 +7,8 @@ permalink:           pretty
 title:               Introduction to Data Science - Course Project Website
 tagline:             ''
 description:         'Course Project Website'
-url:                 https://titu1994.github.io/IDS-Course-Project
-baseurl:             ''
+url:                 https://titu1994.github.io/
+baseurl:             '/IDS-Course-Project'
 paginate:            5
 
 pages_list:
