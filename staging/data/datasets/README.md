@@ -32,7 +32,7 @@ It also provides a weak baseline on what we hope to improve using the full datas
 Scraped nearly 250 of the 550 restaurants for approximately 58000 reviews, over the course of a day. <br>
 Data is limited because Yelp has very aggressive throttling and IP bans for several minutes if caught scraping its pages.
 
-## Attributes
+### Attributes
 
 | Attribute  | Description  |
 | ------|:----------------:|
@@ -73,7 +73,7 @@ These attributes and their descriptions are copied without modification from the
 | business_id	| 22 character business id, maps to business in business.json |
 | text	| the review itself |
 
-### remaining datasets
+#### Remaining datasets
 
 -   We do not use the user.json data in order to avoid implicit bias towards certain users.
 -   checkins.json is not helpful for sentiment analysis
