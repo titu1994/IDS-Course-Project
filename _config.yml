@@ -14,7 +14,7 @@ paginate:            5
 # About/contact
 author:
   name:
-  url:
+  url:  'https://titu1994.github.io/IDS-Course-Project/about.md'
   email:
 
 # Custom vars
