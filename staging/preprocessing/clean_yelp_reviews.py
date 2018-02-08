@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import re
+from urllib.request import unquote
 
 from staging import resolve_data_path, construct_data_path
 
@@ -144,6 +144,14 @@ df2 = pd.read_json(path)  # type: pd.DataFrame
 
 dataframes = [df1, df2]
 df = pd.concat(dataframes)  # type: pd.DataFrame
+
+def clean_url_names(df):
+    name = df['restaurant_name']
+    name = unquote(name, encoding='utf-8')
+    return name
+
+df['restaurant_name'] = df.apply(clean_url_names, axis=1)
+
 print(df.info())
 print(df.head())
 print()
