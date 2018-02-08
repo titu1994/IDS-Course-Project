@@ -1,8 +1,6 @@
 import requests
 import csv
 from datetime import date, timedelta
-from dateutil.rrule import *
-from dateutil.parser import *
 
 # Variables
 start_year = 2018
