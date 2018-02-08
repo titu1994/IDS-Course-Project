@@ -12,7 +12,8 @@ baseurl:             '/IDS-Course-Project'
 paginate:            5
 
 pages_list:
-  Archive: '/archive'
+  About: '/IDS-Course-Project/about'
+  Archive: '/IDS-Course-Project/archive'
   Feed: '/atom.xml'
 
 
