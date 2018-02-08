@@ -3,6 +3,8 @@ import csv
 import time
 from datetime import date, timedelta
 
+from external.wunderland_weather.key import _PRIVATE_KEY
+
 # Variables
 start_year = 2018
 start_month = 1
@@ -21,7 +23,7 @@ print("End Date : ", finish_date)
 
 outPath = '%s-%s.csv' % (begin_date, finish_date)  # output path
 station = 'KDEW'  # weather station ID
-api = ''  # developer API key
+api = _PRIVATE_KEY  # developer API key
 
 # Create list of dates between start and end
 print("Number of datapoints that will be written:", len(dates))
