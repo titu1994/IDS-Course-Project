@@ -11,10 +11,15 @@ url:                 https://titu1994.github.io
 baseurl:             '/IDS-Course-Project'
 paginate:            5
 
+pages_list:
+  Archive: '/archive'
+  Feed: '/atom.xml'
+
+
 # About/contact
 author:
   name:
-  url:  'https://titu1994.github.io/IDS-Course-Project/about.md'
+  url:
   email:
 
 # Custom vars
