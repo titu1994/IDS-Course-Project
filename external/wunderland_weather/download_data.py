@@ -21,7 +21,7 @@ for i in range(500):
 finish_date = dates[-1]
 print("End Date : ", finish_date)
 
-outPath = '%s-%s-%s.csv' % (begin_date, finish_date, zip_code)  # output path
+outPath = '%s-%s-%d.csv' % (begin_date, finish_date, zip_code)  # output path
 api = _PRIVATE_KEY  # developer API key
 
 # Create list of dates between start and end
