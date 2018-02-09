@@ -6,6 +6,7 @@ stagint/models/*
 
 # external data
 external/wunderland_weather/key.py
+external/**/*.csv
 external/**/*.json
 external/yelp_reviews/.scrapy/*
 
