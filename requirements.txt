@@ -6,3 +6,4 @@ scrapy
 scrapy-beautifulsoup
 beautifulsoup4
 html5lib
+requests
