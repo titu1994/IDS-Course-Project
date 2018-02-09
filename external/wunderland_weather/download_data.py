@@ -15,7 +15,6 @@ begin_date = date(start_year, start_month, start_date)
 delta = timedelta(days=1)
 
 dates = []
-
 for i in range(500):
     dates.append(begin_date - i * delta)
 
@@ -40,7 +39,9 @@ with open(outPath, 'a+', newline='') as csvfile:
 
     for i, day in enumerate(dates):
         if (i + 1) % 10 == 0:
+            print("Finished processing %d requests" % (i + 1))
             print("Sleeping for 1 minute to avoid excess API calls")
+            print()
             time.sleep(65)
 
         r = requests.get('http://api.wunderground.com/api/' + api + '/history_' + day + '/q/' + str(zip_code) + '.json')
