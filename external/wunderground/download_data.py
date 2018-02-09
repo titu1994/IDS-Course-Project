@@ -3,7 +3,7 @@ import csv
 import time
 from datetime import date, timedelta
 
-from external.wunderland_weather.key import _PRIVATE_KEY
+from key import _PRIVATE_KEY
 
 # Variables
 start_year = 2018
