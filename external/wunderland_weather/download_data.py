@@ -9,6 +9,7 @@ from external.wunderland_weather.key import _PRIVATE_KEY
 start_year = 2018
 start_month = 1
 start_date = 31
+zip_code = 60601
 
 begin_date = date(start_year, start_month, start_date)
 delta = timedelta(days=1)
@@ -22,7 +23,6 @@ finish_date = dates[-1]
 print("End Date : ", finish_date)
 
 outPath = '%s-%s.csv' % (begin_date, finish_date)  # output path
-station = 'KMDW'  # weather station ID
 api = _PRIVATE_KEY  # developer API key
 
 # Create list of dates between start and end
@@ -43,8 +43,7 @@ with open(outPath, 'a+', newline='') as csvfile:
             print("Sleeping for 1 minute to avoid excess API calls")
             time.sleep(65)
 
-        r = requests.get(
-            'http://api.wunderground.com/api/' + api + '/history_' + day + '/q/' + station + '.json')
+        r = requests.get('http://api.wunderground.com/api/' + api + '/history_' + day + '/q/' + str(zip_code) + '.json')
         data = r.json()['history']['observations']
         for elem in data:
             f.writerow([elem["utcdate"]["year"] + elem["utcdate"]["mon"] + elem["utcdate"]["mday"] + 'T' +
