@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Project Aletheia
+title: Project Alethea
 ---
 
 
