@@ -8,7 +8,7 @@ title: Project Alethea
 
 1.  Amlaan Bhoi (abhoi)
 2.  Somshubra Majumdar (smajum6)
-3.  Debojit Kaushik
+3.  Debojit Kaushik (Github: dkaushik94)
 4.  Christopher Alphones
 
 # Current Structure
