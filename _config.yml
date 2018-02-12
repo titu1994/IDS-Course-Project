@@ -9,7 +9,7 @@ tagline:             ''
 description:         'Course Project Website'
 url:                 https://titu1994.github.io/
 baseurl:             '/IDS-Course-Project'
-paginate:            5
+paginate:            1
 
 pages_list:
   About: 'https://titu1994.github.io/IDS-Course-Project/about'
