@@ -44,7 +44,7 @@ title: Weekly Report #1
 
 ### What I did
 - Imported project structure and core modules that will be built later
-- As part of data discovery obtained for now obtained the public bike data
+- As part of data discovery; for now obtained the public bike data
 - Spent time in understanding work that has to be done and what is being done by the team.
 
 ### What I plan to do next week
