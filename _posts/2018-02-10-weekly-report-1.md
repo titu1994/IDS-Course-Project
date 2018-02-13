@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Weakly Report #1
+title: Weekly Report #1
 ---
 
 # Amlaan
@@ -43,7 +43,15 @@ title: Weakly Report #1
 # Christopher
 
 ### What I did
+- Imported project structure and core modules that will be built later
+- As part of data discovery obtained for now obtained the public bike data
+- Spent time in understanding work that has to be done and what is being done by the team.
 
 ### What I plan to do next week
+- Planning on getting the data in the health sector and relate it to the existing requirements
+- Must finalize the data and draft the first report.
+- Learn more on visualization, for that is where I look forward to contribute primarily.
 
 ### Blocks or impediments to the plan for next week
+- Nothing unprecedented, like pointed above the integration of data could need some extra effort.
+
