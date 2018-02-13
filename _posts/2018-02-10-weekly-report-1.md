@@ -49,10 +49,17 @@ title: Weekly Report #1
 # Debojit
 
 ### What I did
+- Imported and ran the scripts to collect data. Updated myself with the structure and workflow.
+- Surfed the internet to decided on a few datasets.
+- Designed a initial pipeline for the project and imparted it to teammates
 
 ### What I plan to do next week
+- Scrape data from some sites and download a dataset I have decided on.
+- Clean the scraped data into the commonly decided format.
+- Discuss with teammates the required duties and responsibilities.
 
 ### Blocks or impediments to the plan for next week
+- None so far, except a few conditions to be decided while cleaning the data and integrating it with the other three.
 
 # Christopher
 
