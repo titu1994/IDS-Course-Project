@@ -7,9 +7,23 @@ title: Weekly Report #1
 
 ### What I did
 
+- Explored datasets online; especially on kaggle.com.
+- Curated three Chicago related datasets:
+    - Crimes in Chicago (~1.4m samples)
+    - Chicago Restaurant Inspections (~154k samples)
+    - Chicago - Citywide Payroll Data (~32k samples)
+- Wrote scripts to clean, handle missing data, and store Crimes and Restaurant Inspection datasets (fully usable for ML models)
+- Created Wunderground API key to get weather data when zipcode is available
+
 ### What I plan to do next week
 
+- Explore and clean more datasets
+- Start out on a strategy to integrate various available and usable datasets with entity resolution techniques
+- Try out Decision trees and Random Forrests from Scikit library
+
 ### Blocks or impediments to the plan for next week
+
+- None for now. The biggest issue would be data integration and handling conflicting and empty data that arises when columns are integrated.
 
 # Somshubra
 
