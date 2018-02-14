@@ -161,7 +161,6 @@ def tokenize(texts : List[str]) -> np.ndarray:
             pickle.dump(vectorizer, f)
             print("Count Vectorizer saved to file !")
 
-    print('Shape of tokenizer counts :', x_counts.shape)
     return x_counts
 
 
