@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 
 def resolve_data_path(path):
@@ -20,4 +21,9 @@ def construct_data_path(filename):
         path = '../data/' + filename
     else:
         path = '/staging/data/' + filename
+
+    directory = os.path.split(path)[0]
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
     return path

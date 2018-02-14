@@ -6,4 +6,7 @@ External Sources
     -   Blogpost on how to scrape websites with complex measures against scraping: https://blog.scrapinghub.com/2017/07/07/scraping-the-steam-game-store-with-scrapy/
     -   Scraping names and spaces without any other character: https://stackoverflow.com/questions/2779453/python-strip-everything-but-spaces-and-alphanumeric
     -   Removing \xa0 (unicode ' ') and normalizing unicode: https://stackoverflow.com/questions/10993612/python-removing-xa0-from-string
-    -
+
+List of Stopwords without having to install NLTK
+-   https://stackoverflow.com/questions/19130512/stopword-removal-with-nltk
+-   https://www.geeksforgeeks.org/removing-stop-words-nltk-python/
