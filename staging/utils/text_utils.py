@@ -18,6 +18,10 @@ sns.set_style('white')
 
 from staging import construct_data_path
 
+# cache them to access faster
+_vectorizer = None  # type: CountVectorizer
+_tfidf_transformer = None  # type: TfidfTransformer
+
 
 def load_dataset(path : str) -> pd.DataFrame:
     '''
@@ -101,35 +105,54 @@ def remove_stopwords_punctuation(df: pd.DataFrame, key: str, return_sentence: bo
     '''
     # Ref: https://stackoverflow.com/questions/19130512/stopword-removal-with-nltk
     # Ref: https://www.geeksforgeeks.org/removing-stop-words-nltk-python/
-    stopwords = {'ourselves', 'hers', 'between', 'yourself', 'but', 'again', 'there', 'about', 'once', 'during', 'out',
-                 'very', 'having', 'with', 'they', 'own', 'an', 'be', 'some', 'for', 'do', 'its', 'yours', 'such',
-                 'into', 'of', 'most', 'itself', 'other', 'off', 'is', 's', 'am', 'or', 'who', 'as', 'from', 'him',
-                 'each', 'the', 'themselves', 'until', 'below', 'are', 'we', 'these', 'your', 'his', 'through', 'don',
-                 'nor', 'me', 'were', 'her', 'more', 'himself', 'this', 'down', 'should', 'our', 'their', 'while',
-                 'above', 'both', 'up', 'to', 'ours', 'had', 'she', 'all', 'no', 'when', 'at', 'any', 'before', 'them',
-                 'same', 'and', 'been', 'have', 'in', 'will', 'on', 'does', 'yourselves', 'then', 'that', 'because',
-                 'what', 'over', 'why', 'so', 'can', 'did', 'not', 'now', 'under', 'he', 'you', 'herself', 'has',
-                 'just', 'where', 'too', 'only', 'myself', 'which', 'those', 'i', 'after', 'few', 'whom', 't', 'being',
-                 'if', 'theirs', 'my', 'against', 'a', 'by', 'doing', 'it', 'how', 'further', 'was', 'here', 'than'}
-    stopwords.update(['.', ',', '"', "'", '?', '!', ':', ';', '(', ')', '[', ']', '{', '}'])
-
-    def _clean(text):
-        # remove punctuation
-        chars = [char for char in text
-                 if char not in string.punctuation]
-        text = ''.join(chars)
-
-        # remove stopwords
-        text = [word for word in text.split()
-                if word.lower() not in stopwords]
+    def clean(text):
+        text = clean_text(text)
 
         if return_sentence:
             text = ' '.join(text)
 
         return text
 
-    df[key] = df[key].apply(_clean)
+    df[key] = df[key].apply(clean)
     return df
+
+
+def clean_text(text):
+    '''
+    Helper method to clean text
+
+    Args:
+        text: raw text
+
+    Returns:
+        cleaned text
+    '''
+    stopwords = {'ourselves', 'hers', 'between', 'yourself', 'but', 'again', 'there', 'about', 'once', 'during',
+                     'out',
+                     'very', 'having', 'with', 'they', 'own', 'an', 'be', 'some', 'for', 'do', 'its', 'yours', 'such',
+                     'into', 'of', 'most', 'itself', 'other', 'off', 'is', 's', 'am', 'or', 'who', 'as', 'from', 'him',
+                     'each', 'the', 'themselves', 'until', 'below', 'are', 'we', 'these', 'your', 'his', 'through',
+                     'don',
+                     'nor', 'me', 'were', 'her', 'more', 'himself', 'this', 'down', 'should', 'our', 'their', 'while',
+                     'above', 'both', 'up', 'to', 'ours', 'had', 'she', 'all', 'no', 'when', 'at', 'any', 'before',
+                     'them',
+                     'same', 'and', 'been', 'have', 'in', 'will', 'on', 'does', 'yourselves', 'then', 'that', 'because',
+                     'what', 'over', 'why', 'so', 'can', 'did', 'not', 'now', 'under', 'he', 'you', 'herself', 'has',
+                     'just', 'where', 'too', 'only', 'myself', 'which', 'those', 'i', 'after', 'few', 'whom', 't',
+                     'being',
+                     'if', 'theirs', 'my', 'against', 'a', 'by', 'doing', 'it', 'how', 'further', 'was', 'here', 'than'}
+    stopwords.update(['.', ',', '"', "'", '?', '!', ':', ';', '(', ')', '[', ']', '{', '}'])
+
+    # remove punctuation
+    chars = [char for char in text
+             if char not in string.punctuation]
+    text = ''.join(chars)
+
+    # remove stopwords
+    text = [word for word in text.split()
+            if word.lower() not in stopwords]
+
+    return text
 
 
 def tokenize(texts : List[str]) -> np.ndarray:
@@ -143,23 +166,32 @@ def tokenize(texts : List[str]) -> np.ndarray:
     Returns:
         the n-gram text
     '''
+    global _vectorizer
+
     path = construct_data_path('models/sklearn-utils/vectorizer.pkl')
-    if os.path.exists(path):
-        with open(path, 'rb') as f:
-            print("Vectorizer loaded from saved state !")
-            vectorizer = pickle.load(f)
-            x_counts = vectorizer.transform(texts)
+
+    if _vectorizer is None:
+        if os.path.exists(path):
+            with open(path, 'rb') as f:
+                print("Vectorizer loaded from saved state !")
+                vectorizer = pickle.load(f)
+                _vectorizer = vectorizer
+        else:
+            print("Building the Vectorizer..")
+
+            vectorizer = CountVectorizer(ngram_range=(1, 2), max_features=None)
+            vectorizer.fit(texts)
+            _vectorizer = vectorizer
+
+            print("Count Vectorizer finished building ! Saving to file now ..")
+
+            with open(path, 'wb') as f:
+                pickle.dump(vectorizer, f)
+                print("Count Vectorizer saved to file !")
+
+        x_counts = _vectorizer.transform(texts)
     else:
-        print("Building the Vectorizer..")
-
-        vectorizer = CountVectorizer(ngram_range=(1, 2), max_features=None)
-        x_counts = vectorizer.fit_transform(texts)
-
-        print("Count Vectorizer finished building ! Saving to file now ..")
-
-        with open(path, 'wb') as f:
-            pickle.dump(vectorizer, f)
-            print("Count Vectorizer saved to file !")
+        x_counts = _vectorizer.transform(texts)
 
     return x_counts
 
@@ -174,23 +206,32 @@ def tfidf(tokens) -> np.ndarray:
     Returns:
         the TF-IDF transformed dataset
     '''
+    global _tfidf_transformer
+
     path = construct_data_path('models/sklearn-utils/tfidf.pkl')
-    if os.path.exists(path):
-        with open(path, 'rb') as f:
-            print('TF-IDF transformer loaded from saved state !')
-            transformer = pickle.load(f)
-            x_tfidf = transformer.transform(tokens)
+
+    if _tfidf_transformer is None:
+        if os.path.exists(path):
+            with open(path, 'rb') as f:
+                print('TF-IDF transformer loaded from saved state !')
+                transformer = pickle.load(f)
+                _tfidf_transformer = transformer
+        else:
+            print('Building the TF-IDF transformer..')
+
+            transformer = TfidfTransformer()
+            transformer.fit(tokens)
+            _tfidf_transformer = transformer
+
+            print('TF-IDF transformer built. Saving to file now..')
+
+            with open(path, 'wb') as f:
+                pickle.dump(transformer, f)
+                print('TF-IDF transformer saved to file !')
+
+        x_tfidf = _tfidf_transformer.transform(tokens)
     else:
-        print('Building the TF-IDF transformer..')
-
-        transformer = TfidfTransformer()
-        x_tfidf = transformer.fit_transform(tokens)
-
-        print('TF-IDF transformer built. Saving to file now..')
-
-        with open(path, 'wb') as f:
-            pickle.dump(transformer, f)
-            print('TF-IDF transformer saved to file !')
+        x_tfidf = _tfidf_transformer.transform(tokens)
 
     print('Shape of tf-idf transformed datased : ', x_tfidf.shape)
     return x_tfidf

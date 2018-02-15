@@ -8,6 +8,31 @@ from sklearn.metrics import classification_report, accuracy_score, confusion_mat
 SENTIMENT_CLASS_NAMES = ['negative', 'positive']
 
 
+def _get_predictions(model, X):
+    '''
+    Wrapper function to get predictions transparently from either
+    SKLearn, XGBoost, Ensemble or Keras models.
+
+    Args:
+        model: Model for prediction
+        X: input data in correct format for prediction
+
+    Returns:
+        predictions
+    '''
+    if hasattr(model, 'predict_proba'):  # Normal SKLearn classifiers
+        pred = model.predict_proba(X)
+    elif hasattr(model, '_predict_proba_lr'):  # SVMs
+        pred = model._predict_proba_lr(X)
+    else:
+        pred = model.predict(X)
+
+    if len(pred.shape) == 1:  # for 1-d ouputs
+        pred = pred[:, None]
+
+    return pred
+
+
 def create_train_test_set(X: np.ndarray, y: np.ndarray, test_size: float = 0.1) -> (np.ndarray, np.ndarray,
                                                                                     np.ndarray, np.ndarray):
     '''
