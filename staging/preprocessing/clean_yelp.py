@@ -125,7 +125,7 @@ print()
 print(df.info())
 print(df.head())
 
-save_path = construct_data_path('datasets/yelp_ratings.csv')
+save_path = construct_data_path('raw/yelp/cleaned_yelp_ratings.csv')
 df.to_csv(save_path, index=True, index_label='id', header=True, encoding='utf-8')
 
 names = df['Name'].values

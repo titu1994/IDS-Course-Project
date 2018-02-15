@@ -63,7 +63,7 @@ def add_sentiment_classes(df: pd.DataFrame, key: str, nb_classes: int = 3) -> pd
                 return 0
     else:
         def _class(rating):
-            if rating >= 3:
+            if rating > 3:
                 return 1
             else:
                 return 0
@@ -251,7 +251,7 @@ def plot_yelp_dataset_info(df: pd.DataFrame):
 if __name__ == '__main__':
     from staging import resolve_data_path
 
-    reviews_path = resolve_data_path('datasets/yelp_reviews.csv')
+    reviews_path = resolve_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
     prepare_yelp_reviews_dataset_sklearn(reviews_path, nb_sentiment_classes=3)
 
     # df = pd.read_csv(reviews_path, header=0, encoding='utf-8', index_col='id')

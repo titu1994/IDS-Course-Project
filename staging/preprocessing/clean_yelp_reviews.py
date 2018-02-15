@@ -169,5 +169,5 @@ print()
 print(list(restaurants_remaining))
 
 # store full dataset
-path = construct_data_path('datasets/yelp_reviews.csv')
+path = construct_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
 df.to_csv(path, header=True, index=True, encoding='utf-8', index_label='id')
