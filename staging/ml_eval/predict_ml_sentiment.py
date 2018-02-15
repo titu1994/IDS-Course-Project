@@ -77,6 +77,9 @@ def get_logistic_regression_prediction(text: str):
     return classification, confidence
 
 if __name__ == '__main__':
+    import logging
+    logging.basicConfig(level=logging.INFO)
+
     text = "sad bad disgusting horrible"
     label, confidence = get_logistic_regression_prediction(text)
 

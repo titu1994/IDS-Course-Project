@@ -2,14 +2,12 @@ import string
 import os
 import pickle
 from typing import List
+import logging
 
 import pandas as pd
 import numpy as np
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.model_selection import StratifiedKFold
-from sklearn.metrics import f1_score, classification_report, accuracy_score, confusion_matrix
-
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -173,21 +171,21 @@ def tokenize(texts : List[str]) -> np.ndarray:
     if _vectorizer is None:
         if os.path.exists(path):
             with open(path, 'rb') as f:
-                print("Vectorizer loaded from saved state !")
+                logging.info('Vectorizer loaded from saved state !')
                 vectorizer = pickle.load(f)
                 _vectorizer = vectorizer
         else:
-            print("Building the Vectorizer..")
+            logging.info('Building the Vectorizer..')
 
             vectorizer = CountVectorizer(ngram_range=(1, 2), max_features=None)
             vectorizer.fit(texts)
             _vectorizer = vectorizer
 
-            print("Count Vectorizer finished building ! Saving to file now ..")
+            logging.info('Count Vectorizer finished building ! Saving to file now ..')
 
             with open(path, 'wb') as f:
                 pickle.dump(vectorizer, f)
-                print("Count Vectorizer saved to file !")
+                logging.info('Count Vectorizer saved to file !')
 
         x_counts = _vectorizer.transform(texts)
     else:
@@ -213,27 +211,27 @@ def tfidf(tokens) -> np.ndarray:
     if _tfidf_transformer is None:
         if os.path.exists(path):
             with open(path, 'rb') as f:
-                print('TF-IDF transformer loaded from saved state !')
+                logging.info('TF-IDF transformer loaded from saved state !')
                 transformer = pickle.load(f)
                 _tfidf_transformer = transformer
         else:
-            print('Building the TF-IDF transformer..')
+            logging.info('Building the TF-IDF transformer..')
 
             transformer = TfidfTransformer()
             transformer.fit(tokens)
             _tfidf_transformer = transformer
 
-            print('TF-IDF transformer built. Saving to file now..')
+            logging.info('TF-IDF transformer built. Saving to file now..')
 
             with open(path, 'wb') as f:
                 pickle.dump(transformer, f)
-                print('TF-IDF transformer saved to file !')
+                logging.info('TF-IDF transformer saved to file !')
 
         x_tfidf = _tfidf_transformer.transform(tokens)
     else:
         x_tfidf = _tfidf_transformer.transform(tokens)
 
-    print('Shape of tf-idf transformed datased : ', x_tfidf.shape)
+    logging.info('Shape of tf-idf transformed datased : %s' % str(x_tfidf.shape))
     return x_tfidf
 
 
