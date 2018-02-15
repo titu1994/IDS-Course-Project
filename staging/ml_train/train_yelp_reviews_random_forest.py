@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     compute_metrics(y_test, y_preds, target_names=SENTIMENT_CLASS_NAMES)
 
-    clf_path = 'models/sklearn/sentiment/decision_tree.pkl'
+    clf_path = 'models/sklearn/sentiment/random_forest.pkl'
     clf_path = construct_data_path(clf_path)
 
     joblib.dump(clf, clf_path)
