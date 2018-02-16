@@ -267,6 +267,35 @@ def prepare_yelp_reviews_dataset_sklearn(path : str, nb_sentiment_classes : int 
     return data, labels
 
 
+def _prepare_yelp_reviews_dataset_keras(path : str, nb_sentiment_classes : int = 3) -> (np.array, np.array):
+    '''
+    Loads the yelp reviews dataset for Scikit-learn models,
+    prepares them by adding the class label and cleaning the
+    reviews, tokenize and normalize them.
+
+    Args:
+        path: resolved path to the dataset
+        nb_sentiment_classes: number of sentiment classes.
+            Can be 2 or 3 only.
+
+    Returns:
+        a tuple of (data, labels)
+    '''
+    df = load_dataset(path)
+
+    # calculate the classes of the dataset
+    df = add_sentiment_classes(df, key='rating', nb_classes=nb_sentiment_classes)
+
+    # clean the dataset of stopwords and punctuations
+    df = remove_stopwords_punctuation(df, key='review', return_sentence=True)
+
+    # extract the cleaned reviews and the classes
+    reviews = df['review'].values
+    labels = df['class'].values
+
+    return reviews, labels
+
+
 def plot_yelp_dataset_info(df: pd.DataFrame):
     # Plot relationship of ratings and sentence length
     grid = sns.FacetGrid(data=df, col='rating')
@@ -291,17 +320,17 @@ if __name__ == '__main__':
     from staging import resolve_data_path
 
     reviews_path = resolve_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
-    prepare_yelp_reviews_dataset_sklearn(reviews_path, nb_sentiment_classes=3)
+    #prepare_yelp_reviews_dataset_sklearn(reviews_path, nb_sentiment_classes=3)
 
-    # df = pd.read_csv(reviews_path, header=0, encoding='utf-8', index_col='id')
-    # df = add_sentence_length(df, key='review')
-    # df = add_sentiment_classes(df, key='rating', nb_classes=3)
-    # df = remove_stopwords_punctuation(df, key='review', return_sentence=True)
-    #
-    # print(df.info())
-    # print(df.describe())
-    # print(df.head())
-    # print()
+    df = pd.read_csv(reviews_path, header=0, encoding='utf-8', index_col='id')
+    df = add_sentence_length(df, key='review')
+    df = add_sentiment_classes(df, key='rating', nb_classes=3)
+    df = remove_stopwords_punctuation(df, key='review', return_sentence=True)
 
-    # plot_dataset_information(df)
+    print(df.info())
+    print(df.describe())
+    print(df.head())
+    print()
+
+    plot_yelp_dataset_info(df)
 
