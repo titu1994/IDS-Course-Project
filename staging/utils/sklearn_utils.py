@@ -2,8 +2,8 @@ import numpy as np
 from typing import List
 
 from sklearn.model_selection import StratifiedShuffleSplit
-from sklearn.metrics import classification_report, accuracy_score, confusion_matrix, make_scorer, f1_score
-
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix, f1_score
+from sklearn.utils.class_weight import compute_class_weight as _compute_class_weight
 
 SENTIMENT_CLASS_NAMES = ['negative', 'positive']
 
@@ -107,3 +107,17 @@ def make_f1_scorer(clf, X, y):
     y = y.astype('uint32')
     y_pred = clf.predict(X)
     return f1_score(y, y_pred, average='micro')
+
+
+def compute_class_weight(y_true: np.ndarray) -> np.ndarray:
+    '''
+    Simple wrapper to compute the class weights of the dataset
+
+    Args:
+        y_true: the full dataset labels
+
+    Returns:
+        class_weight_vect : ndarray, shape (n_classes,)
+            Array with class_weight_vect[i] the weight for i-th class
+    '''
+    return _compute_class_weight('balanced', np.unique(y_true), y_true)

@@ -7,6 +7,7 @@ from typing import List, Set, Dict
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils import to_categorical
+from keras.callbacks import TensorBoard
 from keras import backend as K
 
 from staging import resolve_data_path, construct_data_path
@@ -16,6 +17,63 @@ from staging.utils.text_utils import _prepare_yelp_reviews_dataset_keras
 EMBEDDING_DIM = 300
 MAX_NB_WORDS = 105000
 MAX_SEQUENCE_LENGTH = 500
+
+
+'''
+Below is a modification to the TensorBoard callback to perform 
+batchwise writing to the tensorboard, instead of only at the end
+of the batch.
+'''
+class TensorBoardBatch(TensorBoard):
+    def __init__(self, log_dir='./logs',
+                 histogram_freq=0,
+                 batch_size=32,
+                 write_graph=True,
+                 write_grads=False,
+                 write_images=False,
+                 embeddings_freq=0,
+                 embeddings_layer_names=None,
+                 embeddings_metadata=None):
+        super(TensorBoardBatch, self).__init__(log_dir=log_dir,
+                                               histogram_freq=histogram_freq,
+                                               batch_size=batch_size,
+                                               write_graph=write_graph,
+                                               write_grads=write_grads,
+                                               write_images=write_images,
+                                               embeddings_freq=embeddings_freq,
+                                               embeddings_layer_names=embeddings_layer_names,
+                                               embeddings_metadata=embeddings_metadata)
+
+        # conditionally import tensorflow iff TensorBoardBatch is created
+        self.tf = __import__('tensorflow')
+
+    def on_batch_end(self, batch, logs=None):
+        logs = logs or {}
+
+        for name, value in logs.items():
+            if name in ['batch', 'size']:
+                continue
+            summary = self.tf.Summary()
+            summary_value = summary.value.add()
+            summary_value.simple_value = value.item()
+            summary_value.tag = name
+            self.writer.add_summary(summary, batch)
+
+        self.writer.flush()
+
+    def on_epoch_end(self, epoch, logs=None):
+        logs = logs or {}
+
+        for name, value in logs.items():
+            if name in ['batch', 'size']:
+                continue
+            summary = self.tf.Summary()
+            summary_value = summary.value.add()
+            summary_value.simple_value = value.item()
+            summary_value.tag = name
+            self.writer.add_summary(summary, epoch * self.batch_size)
+
+        self.writer.flush()
 
 
 def fbeta_score(y_true, y_pred):
@@ -51,7 +109,7 @@ def fbeta_score(y_true, y_pred):
 
     precision = precision(y_true, y_pred)
     recall = recall(y_true, y_pred)
-    return 2 * ((precision * recall) / (precision + recall))
+    return 2 * ((precision * recall) / (precision + recall + K.epsilon()))
 
 
 def load_embedding_matrix(word_index: Dict, max_nb_words: int, embedding_dim: int, print_error_words: bool=True) -> np.ndarray:
