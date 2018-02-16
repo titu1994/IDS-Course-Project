@@ -11,6 +11,16 @@ _logistic_regression = None
 _random_forest = None
 
 
+
+def _preprocess_text(text):
+    text = clean_text(text)
+    text = ' '.join(text)
+    texts = [text]
+    tokens = tokenize(texts)
+    tokens = tfidf(tokens)
+    return tokens
+
+
 def get_decision_tree_prediction(text: str):
     global _decision_tree
 
@@ -19,12 +29,7 @@ def get_decision_tree_prediction(text: str):
         path = resolve_data_path(path)
         _decision_tree = joblib.load(path)
 
-    text = clean_text(text)
-    text = ' '.join(text)
-    texts = [text]
-
-    tokens = tokenize(texts)
-    tokens = tfidf(tokens)
+    tokens = _preprocess_text(text)
 
     pred = _get_predictions(_decision_tree, tokens)
     confidence = np.max(pred, axis=-1)[0]
@@ -41,12 +46,7 @@ def get_random_forest_prediction(text: str):
         path = resolve_data_path(path)
         _random_forest = joblib.load(path)
 
-    text = clean_text(text)
-    text = ' '.join(text)
-    texts = [text]
-
-    tokens = tokenize(texts)
-    tokens = tfidf(tokens)
+    tokens = _preprocess_text(text)
 
     pred = _get_predictions(_random_forest, tokens)
     confidence = np.max(pred, axis=-1)[0]
@@ -63,12 +63,7 @@ def get_logistic_regression_prediction(text: str):
         path = resolve_data_path(path)
         _logistic_regression = joblib.load(path)
 
-    text = clean_text(text)
-    text = ' '.join(text)
-    texts = [text]
-
-    tokens = tokenize(texts)
-    tokens = tfidf(tokens)
+    tokens = _preprocess_text(text)
 
     pred = _get_predictions(_logistic_regression, tokens)
     confidence = np.max(pred, axis=-1)[0]
