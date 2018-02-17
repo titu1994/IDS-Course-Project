@@ -76,19 +76,19 @@ title: Weekly Report #2
 # Christopher
 
 ### What I did
-- Refered UIC Library Resource Databases and We Search and presented below datasets:.
+- Referred UIC Library Resource Databases and We Search and presented below datasets:.
 	-Demographics and Socioeconomic Characteristics
 	-Cook County Statistics 
 	-Businesses in Chicago
 	-Real Estate Chicago
 - Finalized the data and drafted the data related to above parts for Report1.
-- Inegrated and tabulated the data source links and related attributes as part of Report1. 
-- Had a team meetinf and spent time in understanding work that has to be done and what is being done by the team.
+- Integrated and tabulated the data source links and related attributes as part of Report1. 
+- Had a team meeting and spent time in understanding work that has to be done and what is being done by the team.
 
 ### What I plan to do next week
 - Understanding the next phase of Project Requirement.
 - Look at Census.Gov and CityofChicago Datasets and work related to Demographics information.
-- Learn more on Data Extraction Utilites.
+- Learn more on Data Extraction Utilities.
 
 ### Blocks or impediments to the plan for next week
 - Nothing unprecedented, except that there will time spent in understand the process. 
