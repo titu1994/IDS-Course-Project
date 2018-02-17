@@ -11,19 +11,19 @@ from staging.utils.keras_utils import fbeta_score, TensorBoardBatch
 from staging.utils.sklearn_utils import SENTIMENT_CLASS_NAMES
 from staging.utils.keras_utils import EMBEDDING_DIM, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH
 
-from keras.layers import Dense, Input, Dropout, BatchNormalization, Activation
-from keras.layers import Embedding, GlobalAveragePooling1D
-from keras.layers import Conv1D
+from keras.layers import Dense, Input
+from keras.layers import Embedding
+from keras.layers import LSTM
 from keras.models import Model
 from keras.regularizers import l2
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 
 # edit the model name
-MODEL_NAME = "cnn"
+MODEL_NAME = "lstm"
 NB_EPOCHS = 5
 BATCHSIZE = 512
-REGULARIZATION_STRENGTH = 0.00001
+REGULARIZATION_STRENGTH = 0.0001
 
 # constants that dont need to be changed
 NB_SENTIMENT_CLASSES = 3
@@ -37,8 +37,8 @@ data, labels, _ = prepare_yelp_reviews_dataset_keras(reviews_path, MAX_NB_WORDS,
 
 X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size=0.1)
 
-#CLASS_WEIGHTS = compute_class_weight(np.argmax(y_train, axis=-1))
-CLASS_WEIGHTS = [10., 1, 0.01]
+CLASS_WEIGHTS = compute_class_weight(np.argmax(y_train, axis=-1))
+#CLASS_WEIGHTS = [10., 1, 0.01]
 print("Class weights : ", CLASS_WEIGHTS)
 
 embedding_matrix = load_prepared_embedding_matrix()
@@ -47,24 +47,7 @@ embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
 
 input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
 x = embedding_layer(input)
-x = Dropout(0.2)(x)
-
-x = Conv1D(128, 8, padding='same', kernel_initializer='he_normal',
-           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-x = BatchNormalization(axis=-1)(x)
-x = Activation('relu')(x)
-
-x = Conv1D(256, 5, padding='same', kernel_initializer='he_normal',
-           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-x = BatchNormalization(axis=-1)(x)
-x = Activation('relu')(x)
-
-x = Conv1D(128, 3, padding='same', kernel_initializer='he_normal',
-           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-x = BatchNormalization(axis=-1)(x)
-x = Activation('relu')(x)
-
-x = GlobalAveragePooling1D()(x)
+x = LSTM(MAX_SEQUENCE_LENGTH, dropout=0.2, recurrent_dropout=0.2)(x)
 x = Dense(NB_SENTIMENT_CLASSES, activation='softmax', kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
 
 model = Model(input, x, name=MODEL_NAME)

@@ -16,7 +16,7 @@ from staging.utils.text_utils import _prepare_yelp_reviews_dataset_keras
 
 EMBEDDING_DIM = 300
 MAX_NB_WORDS = 105000
-MAX_SEQUENCE_LENGTH = 500
+MAX_SEQUENCE_LENGTH = 150
 
 
 '''
