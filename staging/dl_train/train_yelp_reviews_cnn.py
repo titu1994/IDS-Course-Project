@@ -23,7 +23,7 @@ from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 MODEL_NAME = "cnn"
 NB_EPOCHS = 5
 BATCHSIZE = 128
-REGULARIZATION_STRENGTH = 0.01
+REGULARIZATION_STRENGTH = 0.0001
 
 # constants that dont need to be changed
 NB_SENTIMENT_CLASSES = 3
