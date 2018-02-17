@@ -1,29 +1,29 @@
 ---
 layout: post
-title: Weekly Report #2
+title: Weekly Report 2
 ---
 
 # Amlaan
 
 ### What I did
 
-- Explored datasets online; especially on kaggle.com.
 - Curated three Chicago related datasets:
-    - Crimes in Chicago (~1.4m samples)
-    - Chicago Restaurant Inspections (~154k samples)
-    - Chicago - Citywide Payroll Data (~32k samples)
-- Wrote scripts to clean, handle missing data, and store Crimes and Restaurant Inspection datasets (fully usable for ML models)
-- Created Wunderground API key to get weather data when zipcode is available
+    - Employee Payroll (cookcountyil.gov)
+    - 911-Finance (illinois.gov)
+    - School incident reports (isbe.net)
+- Wrote scripts to clean, normalize, and visualize said datasets using Numpy, Pandas, and Seaborn (barplot, heatmap, boxplot, kdeplot, violinplot).
+- Experimented with Scikit library's Decision trees, SVM, and ExtraTreesClassifier libraries.
+- Ran a test script for XGBoost on dummy dataset for possible regression/classification tasks in later stages.
 
 ### What I plan to do next week
 
-- Explore and clean more datasets
-- Start out on a strategy to integrate various available and usable datasets with entity resolution techniques
-- Try out Decision trees and Random Forrests from Scikit library
+- Work on curating datasets specified in "Data Extraction" portion of the project description
+- Start integration of different datasets and normalize the data
+- Visualize data in various formats to check for feature importance
 
 ### Blocks or impediments to the plan for next week
 
-- None for now. The biggest issue would be data integration and handling conflicting and empty data that arises when columns are integrated.
+- Data integration would be the biggest problem. This also includes combining similar columns, changing data formats so they match, and finally start answering the mentioned queries.
 
 # Somshubra
 
