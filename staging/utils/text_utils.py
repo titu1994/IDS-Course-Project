@@ -332,5 +332,19 @@ if __name__ == '__main__':
     print(df.head())
     print()
 
-    plot_yelp_dataset_info(df)
+    # names = df.restaurant_name.values
+    # names, counts = np.unique(names, return_counts=True)
+
+    # import csv
+    # with open('restaurant_reviews.csv', 'w', encoding='utf-8', newline='') as f:
+    #     writer = csv.writer(f)
+    #     writer.writerow(['name', 'count'])
+    #
+    #     for name, count in zip(names, counts):
+    #         writer.writerow([name, count])
+
+    # for i, name in enumerate(names):
+    #     print("Restaurant Name :", name)
+
+    #plot_yelp_dataset_info(df)
 

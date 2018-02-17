@@ -59,10 +59,20 @@ def create_train_test_set(X: np.ndarray, y: np.ndarray, test_size: float = 0.1) 
     print("Train set size:", X_train.shape)
     print("Test set size:", X_test.shape)
 
-    _, train_distribution = np.unique(y_train, return_counts=True)
+    if y_train.shape[-1] > 1:
+        y_train_temp = np.argmax(y_train, axis=-1)
+    else:
+        y_train_temp = y_train
+
+    _, train_distribution = np.unique(y_train_temp, return_counts=True)
     print("Train set class distribution :", train_distribution / float(sum(train_distribution)))
 
-    _, test_distribution = np.unique(y_test, return_counts=True)
+    if y_test.shape[-1] > 1:
+        y_test_temp = np.argmax(y_test, axis=-1)
+    else:
+        y_test_temp = y_test
+
+    _, test_distribution = np.unique(y_test_temp, return_counts=True)
     print("Test set class distribution :", test_distribution / float(sum(test_distribution)))
 
     return (X_train, y_train, X_test, y_test)
