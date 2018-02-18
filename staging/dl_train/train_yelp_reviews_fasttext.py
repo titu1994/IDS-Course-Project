@@ -7,7 +7,6 @@ from staging.utils.sklearn_utils import compute_metrics, create_train_test_set, 
 from staging.utils.keras_utils import prepare_yelp_reviews_dataset_keras
 from staging.utils.keras_utils import load_prepared_embedding_matrix
 from staging.utils.keras_utils import fbeta_score, TensorBoardBatch
-from staging.utils.layers.threshold import PriorThresholding
 
 from staging.utils.sklearn_utils import SENTIMENT_CLASS_NAMES, SENTIMENT_CLASS_PRIORS
 from staging.utils.keras_utils import EMBEDDING_DIM, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH
@@ -18,6 +17,8 @@ from keras.models import Model
 from keras.regularizers import l2
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
+
+from staging.utils.layers.generic import PriorScaling
 
 # edit the model name
 MODEL_NAME = "fasttext"
@@ -39,8 +40,7 @@ X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size
                                                          rebalance_class_distribution=True,
                                                          cache=True)
 
-CLASS_WEIGHTS = compute_class_weight(np.argmax(y_train, axis=-1))
-#CLASS_WEIGHTS[0] = 10.
+CLASS_WEIGHTS = 1. / np.asarray(SENTIMENT_CLASS_PRIORS)
 print("Class weights : ", CLASS_WEIGHTS)
 
 embedding_matrix = load_prepared_embedding_matrix()
@@ -56,7 +56,7 @@ x = BatchNormalization(axis=-1)(x)
 x = Activation('relu')(x)
 x = Dropout(0.2)(x)
 x = Dense(NB_SENTIMENT_CLASSES, activation='softmax', kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-x = PriorThresholding(SENTIMENT_CLASS_PRIORS)(x)
+x = PriorScaling(SENTIMENT_CLASS_PRIORS)(x)
 
 model = Model(input, x, name=MODEL_NAME)
 model.summary()

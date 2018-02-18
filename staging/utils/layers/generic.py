@@ -3,10 +3,10 @@ from keras.engine.topology import Layer
 import numpy as np
 
 
-class PriorThresholding(Layer):
+class PriorScaling(Layer):
 
     def __init__(self, class_priors, **kwargs):
-        super(PriorThresholding, self).__init__(**kwargs)
+        super(PriorScaling, self).__init__(**kwargs)
         self.supports_masking = True
 
         self.prior_weights = np.asarray(class_priors)
@@ -17,7 +17,7 @@ class PriorThresholding(Layer):
         self.prior_weights = 1. / self.prior_weights
         self.prior_weights = np.reshape(self.prior_weights, (1, -1))
 
-        super(PriorThresholding, self).build(input_shape)  # Be sure to call this somewhere!
+        super(PriorScaling, self).build(input_shape)  # Be sure to call this somewhere!
 
     def call(self, x, mask=None):
         y = x * self.prior_weights

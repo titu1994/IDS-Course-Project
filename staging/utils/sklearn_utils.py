@@ -3,7 +3,7 @@ import numpy as np
 from typing import List
 from hashlib import sha1
 
-from sklearn.svm import SVC
+from scipy.sparse import issparse, load_npz, save_npz
 from imblearn.over_sampling import SMOTE
 
 from sklearn.model_selection import StratifiedShuffleSplit
@@ -40,20 +40,32 @@ def create_train_test_set(X: np.ndarray, y: np.ndarray,
     y = y.astype('float32')
 
     if cache:
-        hash_val = sha1(X.tostring()).hexdigest()
+        if not issparse(X):
+            hash_val = sha1(X.tostring()).hexdigest()
+            ext = ".npy"
+
+            save_fn = np.save
+            load_fn = np.load
+        else:
+            hash_val = sha1(X.data).hexdigest()
+            ext = ".npz"
+
+            save_fn = save_npz
+            load_fn = load_npz
+
         base_path = 'datasets/cache/sentiment/%s/' % hash_val
         cache_path = construct_data_path(base_path)
 
-        if os.path.exists(cache_path + 'x_train.npy'):
-            X_train = np.load(cache_path + 'x_train.npy')
+        if os.path.exists(cache_path + 'x_train' + ext):
+            X_train = load_fn(cache_path + 'x_train' + ext)
             y_train = np.load(cache_path + 'y_train.npy')
-            X_test = np.load(cache_path + 'x_test.npy')
+            X_test = load_fn(cache_path + 'x_test' + ext)
             y_test = np.load(cache_path + 'y_test.npy')
 
             print("Train set size:", X_train.shape)
             print("Test set size:", X_test.shape)
 
-            if y_train.shape[-1] > 1:
+            if y_train.ndim > 1 and y_train.shape[-1] > 1:
                 y_train_temp = np.argmax(y_train, axis=-1)
             else:
                 y_train_temp = y_train
@@ -61,7 +73,7 @@ def create_train_test_set(X: np.ndarray, y: np.ndarray,
             _, train_distribution = np.unique(y_train_temp, return_counts=True)
             print("Train set class distribution :", train_distribution / float(sum(train_distribution)))
 
-            if y_test.shape[-1] > 1:
+            if y_test.ndim > 1 and y_test.shape[-1] > 1:
                 y_test_temp = np.argmax(y_test, axis=-1)
             else:
                 y_test_temp = y_test
@@ -83,7 +95,7 @@ def create_train_test_set(X: np.ndarray, y: np.ndarray,
     print("Train set size:", X_train.shape)
     print("Test set size:", X_test.shape)
 
-    if y_train.shape[-1] > 1:
+    if y_train.ndim > 1 and y_train.shape[-1] > 1:
         y_train_temp = np.argmax(y_train, axis=-1)
     else:
         y_train_temp = y_train
@@ -95,7 +107,7 @@ def create_train_test_set(X: np.ndarray, y: np.ndarray,
         print("Oversampling data to overcome class imbalance")
         smote = SMOTE(random_state=0, kind='borderline2', n_jobs=4)
 
-        if y_train.shape[-1] > 1:
+        if y_train.ndim > 1 and y_train.shape[-1] > 1:
             num_classes = y_train.shape[-1]
             X_train, y_train = smote.fit_sample(X_train, y_train_temp)
 
@@ -109,7 +121,7 @@ def create_train_test_set(X: np.ndarray, y: np.ndarray,
         _, train_distribution = np.unique(y_train_temp, return_counts=True)
         print("Rebalenced Train set class distribution :", train_distribution / float(sum(train_distribution)))
 
-    if y_test.shape[-1] > 1:
+    if y_test.ndim > 1 and y_test.shape[-1] > 1:
         y_test_temp = np.argmax(y_test, axis=-1)
     else:
         y_test_temp = y_test
@@ -122,9 +134,9 @@ def create_train_test_set(X: np.ndarray, y: np.ndarray,
         base_path = 'datasets/cache/sentiment/%s/' % hash_val
         cache_path = construct_data_path(base_path)
 
-        np.save(cache_path + 'x_train.npy', X_train)
+        save_fn(cache_path + 'x_train' + ext, X_train)
         np.save(cache_path + 'y_train.npy', y_train)
-        np.save(cache_path + 'x_test.npy', X_test)
+        save_fn(cache_path + 'x_test' + ext, X_test)
         np.save(cache_path + 'y_test.npy', y_test)
 
     return (X_train, y_train, X_test, y_test)
