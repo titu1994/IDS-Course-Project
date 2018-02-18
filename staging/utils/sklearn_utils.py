@@ -1,40 +1,27 @@
+import os
 import numpy as np
 from typing import List
+from hashlib import sha1
+
+from sklearn.svm import SVC
+from imblearn.over_sampling import SMOTE
 
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix, f1_score
 from sklearn.utils.class_weight import compute_class_weight as _compute_class_weight
 
+from staging import to_categorical, _get_predictions, construct_data_path
+
 SENTIMENT_CLASS_NAMES = ['negative', 'positive']
 
 
-def _get_predictions(model, X):
-    '''
-    Wrapper function to get predictions transparently from either
-    SKLearn, XGBoost, Ensemble or Keras models.
-
-    Args:
-        model: Model for prediction
-        X: input data in correct format for prediction
-
-    Returns:
-        predictions
-    '''
-    if hasattr(model, 'predict_proba'):  # Normal SKLearn classifiers
-        pred = model.predict_proba(X)
-    elif hasattr(model, '_predict_proba_lr'):  # SVMs
-        pred = model._predict_proba_lr(X)
-    else:
-        pred = model.predict(X)
-
-    if len(pred.shape) == 1:  # for 1-d ouputs
-        pred = pred[:, None]
-
-    return pred
-
-
-def create_train_test_set(X: np.ndarray, y: np.ndarray, test_size: float = 0.1) -> (np.ndarray, np.ndarray,
-                                                                                    np.ndarray, np.ndarray):
+def create_train_test_set(X: np.ndarray, y: np.ndarray,
+                          test_size: float = 0.1,
+                          rebalance_class_distribution: bool = False,
+                          cache: bool = False) -> (np.ndarray,
+                                                   np.ndarray,
+                                                   np.ndarray,
+                                                   np.ndarray):
     '''
     Creates a single train test split, where the test size is specified.
     Due to use of stratified K-fold, the class balance is preserved in the split exactly.
@@ -43,12 +30,48 @@ def create_train_test_set(X: np.ndarray, y: np.ndarray, test_size: float = 0.1) 
         X: Input X dataset
         y: Input labels Y
         test_size: Percentage of the dataset to be considered for the split
+        rebalance_class_distribution: Use oversampling techniques to balance classes
 
     Returns:
         a tuple of shape (X_train, y_train, X_test, y_test)
     '''
     X = X.astype('float32')
     y = y.astype('float32')
+
+    if cache:
+        hash_val = sha1(X.tostring()).hexdigest()
+        base_path = 'datasets/cache/sentiment/%s/' % hash_val
+        cache_path = construct_data_path(base_path)
+
+        if os.path.exists(cache_path + 'x_train.npy'):
+            X_train = np.load(cache_path + 'x_train.npy')
+            y_train = np.load(cache_path + 'y_train.npy')
+            X_test = np.load(cache_path + 'x_test.npy')
+            y_test = np.load(cache_path + 'y_test.npy')
+
+            print("Train set size:", X_train.shape)
+            print("Test set size:", X_test.shape)
+
+            if y_train.shape[-1] > 1:
+                y_train_temp = np.argmax(y_train, axis=-1)
+            else:
+                y_train_temp = y_train
+
+            _, train_distribution = np.unique(y_train_temp, return_counts=True)
+            print("Train set class distribution :", train_distribution / float(sum(train_distribution)))
+
+            if y_test.shape[-1] > 1:
+                y_test_temp = np.argmax(y_test, axis=-1)
+            else:
+                y_test_temp = y_test
+
+            _, test_distribution = np.unique(y_test_temp, return_counts=True)
+            print("Test set class distribution :", test_distribution / float(sum(test_distribution)))
+
+            print("Datasets loaded from cache !")
+            return (X_train, y_train, X_test, y_test)
+    else:
+        hash_val = None
 
     sss = StratifiedShuffleSplit(n_splits=1, test_size=test_size, random_state=1)
     train_indices, test_indices = next(sss.split(X, y))
@@ -67,6 +90,24 @@ def create_train_test_set(X: np.ndarray, y: np.ndarray, test_size: float = 0.1) 
     _, train_distribution = np.unique(y_train_temp, return_counts=True)
     print("Train set class distribution :", train_distribution / float(sum(train_distribution)))
 
+    if rebalance_class_distribution:
+        print("Oversampling data to overcome class imbalance")
+        smote = SMOTE(random_state=0, kind='borderline2', n_jobs=4)
+
+        if y_train.shape[-1] > 1:
+            num_classes = y_train.shape[-1]
+            X_train, y_train = smote.fit_sample(X_train, y_train_temp)
+
+            y_train_temp = y_train
+            y_train = y_train.reshape((-1, 1))
+            y_train = to_categorical(y_train, num_classes=num_classes)
+        else:
+            X_train, y_train = smote.fit_sample(X_train, y_train_temp)
+            y_train_temp = y_train
+
+        _, train_distribution = np.unique(y_train_temp, return_counts=True)
+        print("Rebalenced Train set class distribution :", train_distribution / float(sum(train_distribution)))
+
     if y_test.shape[-1] > 1:
         y_test_temp = np.argmax(y_test, axis=-1)
     else:
@@ -74,6 +115,16 @@ def create_train_test_set(X: np.ndarray, y: np.ndarray, test_size: float = 0.1) 
 
     _, test_distribution = np.unique(y_test_temp, return_counts=True)
     print("Test set class distribution :", test_distribution / float(sum(test_distribution)))
+
+    if cache:
+        print("Saving dataset to cache")
+        base_path = 'datasets/cache/sentiment/%s/' % hash_val
+        cache_path = construct_data_path(base_path)
+
+        np.save(cache_path + 'x_train.npy', X_train)
+        np.save(cache_path + 'y_train.npy', y_train)
+        np.save(cache_path + 'x_test.npy', X_test)
+        np.save(cache_path + 'y_test.npy', y_test)
 
     return (X_train, y_train, X_test, y_test)
 

@@ -11,7 +11,7 @@ from keras.callbacks import TensorBoard
 from keras import backend as K
 
 from staging import resolve_data_path, construct_data_path
-from staging.utils.text_utils import _prepare_yelp_reviews_dataset_keras
+from staging.utils.text_utils import prepare_yelp_reviews_dataset_keras as _prepare_yelp_reviews_dataset_keras
 
 
 EMBEDDING_DIM = 300
@@ -224,7 +224,7 @@ def add_ngram(sequences: List, token_indice: Dict, ngram_range: int=2) -> List:
 
 
 def prepare_yelp_reviews_dataset_keras(path: str, max_nb_words: int, max_sequence_length: int,
-                                       ngram_range: int=2, nb_sentiment_classes=3) -> (np.ndarray, np.ndarray, Dict):
+                                       ngram_range: int=2, nb_sentiment_classes: int=3) -> (np.ndarray, np.ndarray, Dict):
     '''
     Tokenize the data from sentences to list of words
 

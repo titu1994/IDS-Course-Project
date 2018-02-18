@@ -11,8 +11,8 @@ from staging.utils.keras_utils import fbeta_score, TensorBoardBatch
 from staging.utils.sklearn_utils import SENTIMENT_CLASS_NAMES
 from staging.utils.keras_utils import EMBEDDING_DIM, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH
 
-from keras.layers import Dense, Input, Dropout
-from keras.layers import Embedding, GlobalAveragePooling1D
+from keras.layers import Dense, Input, Dropout, BatchNormalization
+from keras.layers import Embedding, GlobalAveragePooling1D, Activation
 from keras.models import Model
 from keras.regularizers import l2
 from keras.optimizers import Adam
@@ -20,9 +20,9 @@ from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 
 # edit the model name
 MODEL_NAME = "fasttext"
-NB_EPOCHS = 2
+NB_EPOCHS = 10
 BATCHSIZE = 512
-REGULARIZATION_STRENGTH = 0.001
+REGULARIZATION_STRENGTH = 0.0051
 
 # constants that dont need to be changed
 NB_SENTIMENT_CLASSES = 3
@@ -34,7 +34,9 @@ reviews_path = resolve_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
 data, labels, _ = prepare_yelp_reviews_dataset_keras(reviews_path, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH,
                                                      nb_sentiment_classes=NB_SENTIMENT_CLASSES)
 
-X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size=0.1)
+X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size=0.1,
+                                                         rebalance_class_distribution=True,
+                                                         cache=True)
 
 CLASS_WEIGHTS = compute_class_weight(np.argmax(y_train, axis=-1))
 #CLASS_WEIGHTS[0] = 10.
@@ -46,10 +48,13 @@ embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
 
 input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
 x = embedding_layer(input)
+x = Dropout(0.2)(x)
 x = GlobalAveragePooling1D()(x)
-x = Dense(8, activation='relu', kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-x = Dense(NB_SENTIMENT_CLASSES, activation='softmax', kernel_regularizer=l2(REGULARIZATION_STRENGTH),
-          use_bias=False)(x)
+x = Dense(512, kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
+x = BatchNormalization(axis=-1)(x)
+x = Activation('relu')(x)
+x = Dropout(0.2)(x)
+x = Dense(NB_SENTIMENT_CLASSES, activation='softmax', kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
 
 model = Model(input, x, name=MODEL_NAME)
 model.summary()

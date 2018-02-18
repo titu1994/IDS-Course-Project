@@ -267,7 +267,7 @@ def prepare_yelp_reviews_dataset_sklearn(path : str, nb_sentiment_classes : int 
     return data, labels
 
 
-def _prepare_yelp_reviews_dataset_keras(path : str, nb_sentiment_classes : int = 3) -> (np.array, np.array):
+def prepare_yelp_reviews_dataset_keras(path : str, nb_sentiment_classes : int = 3) -> (np.array, np.array):
     '''
     Loads the yelp reviews dataset for Scikit-learn models,
     prepares them by adding the class label and cleaning the
