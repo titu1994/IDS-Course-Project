@@ -13,6 +13,7 @@ from sklearn.utils.class_weight import compute_class_weight as _compute_class_we
 from staging import to_categorical, _get_predictions, construct_data_path
 
 SENTIMENT_CLASS_NAMES = ['negative', 'positive']
+SENTIMENT_CLASS_PRIORS = [0.14665721, 0.17910977, 0.67423302]
 
 
 def create_train_test_set(X: np.ndarray, y: np.ndarray,

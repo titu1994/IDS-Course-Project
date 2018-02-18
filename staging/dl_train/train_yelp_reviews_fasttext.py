@@ -7,8 +7,9 @@ from staging.utils.sklearn_utils import compute_metrics, create_train_test_set, 
 from staging.utils.keras_utils import prepare_yelp_reviews_dataset_keras
 from staging.utils.keras_utils import load_prepared_embedding_matrix
 from staging.utils.keras_utils import fbeta_score, TensorBoardBatch
+from staging.utils.layers.threshold import PriorThresholding
 
-from staging.utils.sklearn_utils import SENTIMENT_CLASS_NAMES
+from staging.utils.sklearn_utils import SENTIMENT_CLASS_NAMES, SENTIMENT_CLASS_PRIORS
 from staging.utils.keras_utils import EMBEDDING_DIM, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH
 
 from keras.layers import Dense, Input, Dropout, BatchNormalization
@@ -55,6 +56,7 @@ x = BatchNormalization(axis=-1)(x)
 x = Activation('relu')(x)
 x = Dropout(0.2)(x)
 x = Dense(NB_SENTIMENT_CLASSES, activation='softmax', kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
+x = PriorThresholding(SENTIMENT_CLASS_PRIORS)(x)
 
 model = Model(input, x, name=MODEL_NAME)
 model.summary()
@@ -63,7 +65,7 @@ optimizer = Adam(lr=1e-3, amsgrad=True)
 model.compile(optimizer, loss='categorical_crossentropy', metrics=['accuracy', fbeta_score])
 
 # build the callbacks
-checkpoint = ModelCheckpoint(WEIGHT_STAMP, monitor='val_fbeta_score', verbose=1, save_weights_only=False,
+checkpoint = ModelCheckpoint(WEIGHT_STAMP, monitor='val_fbeta_score', verbose=1, save_weights_only=True,
                              save_best_only=True, mode='max')
 tensorboard = TensorBoardBatch(LOG_STAMP, batch_size=128)
 lr_scheduler = ReduceLROnPlateau(monitor='val_fbeta_score', factor=np.sqrt(0.5), patience=5, verbose=1,
