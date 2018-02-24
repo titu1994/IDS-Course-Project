@@ -7,23 +7,19 @@ title: Weekly Report 3 - Feb 19-23 2018
 
 ### What I did
 
-- Explored datasets online; especially on kaggle.com.
-- Curated three Chicago related datasets:
-    - Crimes in Chicago (~1.4m samples)
-    - Chicago Restaurant Inspections (~154k samples)
-    - Chicago - Citywide Payroll Data (~32k samples)
-- Wrote scripts to clean, handle missing data, and store Crimes and Restaurant Inspection datasets (fully usable for ML models)
-- Created Wunderground API key to get weather data when zipcode is available
+- Experimented with Decision Trees and Random Forrests from Scikit
+- Experimented with simple XGBoost
+- Explored ways to play around with text data using NLTK
 
 ### What I plan to do next week
 
-- Explore and clean more datasets
-- Start out on a strategy to integrate various available and usable datasets with entity resolution techniques
-- Try out Decision trees and Random Forrests from Scikit library
+- Scrape Yelp and Wunderground (weather) data
+- Use GridSearchCV, RandomizedSearchCV for parameter tuning for various ML models
+- Start on data visualization libraries
 
 ### Blocks or impediments to the plan for next week
 
-- None for now. The biggest issue would be data integration and handling conflicting and empty data that arises when columns are integrated.
+- The main issue will be scraping the Yelp and Wunderground (weather) data. Cleaning the data will also require some clever tricks to avoid just dropping rows with null or invalid values.
 
 # Somshubra
 
