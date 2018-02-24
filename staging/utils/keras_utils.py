@@ -16,7 +16,7 @@ from staging.utils.text_utils import prepare_yelp_reviews_dataset_keras as _prep
 
 EMBEDDING_DIM = 300
 MAX_NB_WORDS = 105000
-MAX_SEQUENCE_LENGTH = 150
+MAX_SEQUENCE_LENGTH = 280
 
 
 '''
@@ -163,6 +163,7 @@ def load_embedding_matrix(word_index: Dict, max_nb_words: int, embedding_dim: in
 
         logging.info('Preparing embedding matrix.')
 
+        word_added_count = 0
         # prepare embedding matrix
         nb_words = min(max_nb_words, len(word_index))
         embedding_matrix = np.zeros((nb_words, embedding_dim))
@@ -173,6 +174,12 @@ def load_embedding_matrix(word_index: Dict, max_nb_words: int, embedding_dim: in
             if embedding_vector is not None:
                 # words not found in embedding index will be all-zeros.
                 embedding_matrix[i] = embedding_vector
+
+                word_added_count += 1
+                logging.info("Added word %s in embedding. Current count of words added = %d" % (word, word_added_count))
+
+        logging.info('Number of words loaded in embedding matrix = %d. '
+                     'Size of embedding matrix = %d' % (word_added_count, len(embedding_matrix)))
 
         # save the constructed embedding matrix in a file for efficient loading next time
         np.save(path, embedding_matrix)

@@ -8,22 +8,23 @@ from staging.utils.keras_utils import prepare_yelp_reviews_dataset_keras
 from staging.utils.keras_utils import load_prepared_embedding_matrix
 from staging.utils.keras_utils import fbeta_score, TensorBoardBatch
 
-from staging.utils.sklearn_utils import SENTIMENT_CLASS_NAMES
+from staging.utils.sklearn_utils import SENTIMENT_CLASS_NAMES, SENTIMENT_CLASS_PRIORS
 from staging.utils.keras_utils import EMBEDDING_DIM, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH
 
-from keras.layers import Dense, Input, Dropout, BatchNormalization, Activation
-from keras.layers import Embedding, GlobalAveragePooling1D
-from keras.layers import Conv1D
+from keras.layers import Dense, Input, Dropout, BatchNormalization
+from keras.layers import Embedding, GlobalAveragePooling1D, Activation
 from keras.models import Model
 from keras.regularizers import l2
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 
+from staging.utils.layers.generic import PriorScaling
+
 # edit the model name
-MODEL_NAME = "cnn"
-NB_EPOCHS = 5
+MODEL_NAME = "fasttext"
+NB_EPOCHS = 15
 BATCHSIZE = 512
-REGULARIZATION_STRENGTH = 0.00001
+REGULARIZATION_STRENGTH = 0.0051
 
 # constants that dont need to be changed
 NB_SENTIMENT_CLASSES = 3
@@ -35,37 +36,30 @@ reviews_path = resolve_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
 data, labels, _ = prepare_yelp_reviews_dataset_keras(reviews_path, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH,
                                                      nb_sentiment_classes=NB_SENTIMENT_CLASSES)
 
-X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size=0.1)
+X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size=0.1,
+                                                         rebalance_class_distribution=True,
+                                                         cache=True)
 
-#CLASS_WEIGHTS = compute_class_weight(np.argmax(y_train, axis=-1))
-CLASS_WEIGHTS = [10., 1, 0.01]
+CLASS_WEIGHTS = 1. / np.asarray(SENTIMENT_CLASS_PRIORS)
 print("Class weights : ", CLASS_WEIGHTS)
 
 embedding_matrix = load_prepared_embedding_matrix()
 embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
-                            weights=[embedding_matrix], trainable=False)
+                            #weights=[embedding_matrix],
+                            trainable=True)
 
 input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
 x = embedding_layer(input)
 x = Dropout(0.2)(x)
-
-x = Conv1D(128, 8, padding='same', kernel_initializer='he_normal',
-           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-x = BatchNormalization(axis=-1)(x)
-x = Activation('relu')(x)
-
-x = Conv1D(256, 5, padding='same', kernel_initializer='he_normal',
-           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-x = BatchNormalization(axis=-1)(x)
-x = Activation('relu')(x)
-
-x = Conv1D(128, 3, padding='same', kernel_initializer='he_normal',
-           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-x = BatchNormalization(axis=-1)(x)
-x = Activation('relu')(x)
-
 x = GlobalAveragePooling1D()(x)
+
+x = Dense(512, kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
+x = BatchNormalization(axis=-1)(x)
+x = Activation('relu')(x)
+x = Dropout(0.2)(x)
+
 x = Dense(NB_SENTIMENT_CLASSES, activation='softmax', kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
+x = PriorScaling(SENTIMENT_CLASS_PRIORS)(x)
 
 model = Model(input, x, name=MODEL_NAME)
 model.summary()
@@ -74,8 +68,8 @@ optimizer = Adam(lr=1e-3, amsgrad=True)
 model.compile(optimizer, loss='categorical_crossentropy', metrics=['accuracy', fbeta_score])
 
 # build the callbacks
-checkpoint = ModelCheckpoint(WEIGHT_STAMP, monitor='val_fbeta_score', verbose=1, save_weights_only=True,
-                             save_best_only=False, mode='max')
+checkpoint = ModelCheckpoint(WEIGHT_STAMP, monitor='val_fbeta_score', verbose=1, save_weights_only=False,
+                             save_best_only=True, mode='max')
 tensorboard = TensorBoardBatch(LOG_STAMP, batch_size=BATCHSIZE)
 lr_scheduler = ReduceLROnPlateau(monitor='val_fbeta_score', factor=np.sqrt(0.5), patience=5, verbose=1,
                                  mode='min', min_lr=1e-5)
@@ -102,3 +96,22 @@ y_test = np.argmax(y_test, axis=-1)
 predictions = np.argmax(predictions, axis=-1)
 
 compute_metrics(y_test, predictions, target_names=SENTIMENT_CLASS_NAMES)
+
+'''
+Accuracy : 51.69356268841994
+
+************************* Classification Report *************************
+             precision    recall  f1-score   support
+
+   negative     0.1944    0.3035    0.2370       827
+   positive     0.7091    0.6597    0.6835      3802
+
+avg / total     0.6171    0.5960    0.6037      4629
+
+
+************************* Confusion Matrix *************************
+negative   positive   
+[[ 251  436]
+ [ 779 2508]]
+
+'''

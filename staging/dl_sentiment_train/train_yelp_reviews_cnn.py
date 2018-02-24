@@ -11,8 +11,9 @@ from staging.utils.keras_utils import fbeta_score, TensorBoardBatch
 from staging.utils.sklearn_utils import SENTIMENT_CLASS_NAMES, SENTIMENT_CLASS_PRIORS
 from staging.utils.keras_utils import EMBEDDING_DIM, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH
 
-from keras.layers import Dense, Input, Dropout, BatchNormalization
-from keras.layers import Embedding, GlobalAveragePooling1D, Activation
+from keras.layers import Dense, Input, Dropout, BatchNormalization, Activation
+from keras.layers import Embedding, GlobalAveragePooling1D, concatenate
+from keras.layers import Conv1D
 from keras.models import Model
 from keras.regularizers import l2
 from keras.optimizers import Adam
@@ -21,8 +22,8 @@ from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from staging.utils.layers.generic import PriorScaling
 
 # edit the model name
-MODEL_NAME = "fasttext"
-NB_EPOCHS = 10
+MODEL_NAME = "cnn"
+NB_EPOCHS = 20
 BATCHSIZE = 512
 REGULARIZATION_STRENGTH = 0.0051
 
@@ -45,18 +46,33 @@ print("Class weights : ", CLASS_WEIGHTS)
 
 embedding_matrix = load_prepared_embedding_matrix()
 embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
-                            weights=[embedding_matrix], trainable=False)
+                            # weights=[embedding_matrix],
+                            trainable=True)
 
 input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
 x = embedding_layer(input)
-x = Dropout(0.2)(x)
-x = GlobalAveragePooling1D()(x)
-x = Dense(512, kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
+w = Dropout(0.5)(x)
+
+x = Conv1D(8, 8, padding='same', kernel_initializer='he_normal', dilation_rate=1,
+           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(w)
 x = BatchNormalization(axis=-1)(x)
 x = Activation('relu')(x)
-x = Dropout(0.2)(x)
+
+y = Conv1D(16, 5, padding='same', kernel_initializer='he_normal', dilation_rate=2,
+           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(w)
+y = BatchNormalization(axis=-1)(y)
+y = Activation('relu')(y)
+
+z = Conv1D(32, 3, padding='same', kernel_initializer='he_normal', dilation_rate=3,
+           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(w)
+z = BatchNormalization(axis=-1)(z)
+z = Activation('relu')(z)
+
+w = concatenate([x, y, z], axis=-1)
+
+x = GlobalAveragePooling1D()(w)
 x = Dense(NB_SENTIMENT_CLASSES, activation='softmax', kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-x = PriorScaling(SENTIMENT_CLASS_PRIORS)(x)
+#x = PriorScaling(SENTIMENT_CLASS_PRIORS)(x)
 
 model = Model(input, x, name=MODEL_NAME)
 model.summary()
@@ -65,9 +81,9 @@ optimizer = Adam(lr=1e-3, amsgrad=True)
 model.compile(optimizer, loss='categorical_crossentropy', metrics=['accuracy', fbeta_score])
 
 # build the callbacks
-checkpoint = ModelCheckpoint(WEIGHT_STAMP, monitor='val_fbeta_score', verbose=1, save_weights_only=True,
+checkpoint = ModelCheckpoint(WEIGHT_STAMP, monitor='val_fbeta_score', verbose=1, save_weights_only=False,
                              save_best_only=True, mode='max')
-tensorboard = TensorBoardBatch(LOG_STAMP, batch_size=128)
+tensorboard = TensorBoardBatch(LOG_STAMP, batch_size=BATCHSIZE)
 lr_scheduler = ReduceLROnPlateau(monitor='val_fbeta_score', factor=np.sqrt(0.5), patience=5, verbose=1,
                                  mode='min', min_lr=1e-5)
 

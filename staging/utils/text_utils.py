@@ -346,5 +346,5 @@ if __name__ == '__main__':
     # for i, name in enumerate(names):
     #     print("Restaurant Name :", name)
 
-    #plot_yelp_dataset_info(df)
+    plot_yelp_dataset_info(df)
 
