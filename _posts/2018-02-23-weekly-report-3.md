@@ -72,14 +72,14 @@ title: Weekly Report 3 - Feb 19-23 2018
 # Christopher
 
 ### What I did
-- Imported project structure and core modules that will be built later
-- As part of data discovery; for now obtained the public bike data
-- Spent time in understanding work that has to be done and what is being done by the team.
+- Updated project structure and core modules that will be built later
+- Looked at Census.Gov and CityofChicago Datasets and work related to Demographics information.
+- Tried some tutorials on data extraction.
 
 ### What I plan to do next week
-- Planning on getting the data in the health sector and relate it to the existing requirements
-- Must finalize the data and draft the first report.
-- Learn more on visualization, for that is where I look forward to contribute primarily.
+- Apply what has been understood for the data extraction.
+- Work with the team in scrapping the yelp data as per the specifications provided.
+- Learn more on visualization.
 
 ### Blocks or impediments to the plan for next week
 - Nothing unprecedented, like pointed above the integration of data could need some extra effort.
