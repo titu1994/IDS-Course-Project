@@ -57,17 +57,18 @@ title: Weekly Report 3 - Feb 19-23 2018
 # Debojit
 
 ### What I did
-- Imported and ran the scripts to collect data. Updated myself with the structure and workflow.
-- Surfed the internet to decided on a few datasets.
-- Designed a initial pipeline for the project and imparted it to teammates
+- Scraped the data sets I wanted to gather.
+- Discussed more pipeline changes which seemed redundant after last week.
+- Tried out some visualization frameworks anf libraries like JS Charts, High Charts and learnt a little bit of d3.js to know what it is about.
 
 ### What I plan to do next week
-- Scrape data from some sites and download a dataset I have decided on.
-- Clean the scraped data into the commonly decided format.
-- Discuss with teammates the required duties and responsibilities.
+- Clean the scraped data and integrate it with our current directory structure
+- Try to establish the connections which were discussed by us between datasets and see if they are actually feasible. This will allow us to see any holes in our ideas as well as asymmetry between datasets schemas.
+- Discuss and implement atleast one Machine learning approach in addition to the other teammates efforts.
 
 ### Blocks or impediments to the plan for next week
-- None so far, except a few conditions to be decided while cleaning the data and integrating it with the other three.
+- None other than usual snags in scraping from different sites according to their HTML structure and heirarchy.
+- Long tutorials for some simple concepts took some of my time which could have been done sooner with a better choice of tutorial to follow. No technical difficulty yet.
 
 # Christopher
 
