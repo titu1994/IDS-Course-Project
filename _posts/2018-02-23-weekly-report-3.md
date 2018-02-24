@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Weekly Report #3
+title: Weekly Report 3
 ---
 
 # Amlaan
