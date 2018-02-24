@@ -33,7 +33,7 @@ title: Weekly Report #3
 - Setup oversampling techniques such as SMOTE for better sentiment analysis balance.
 - Setup training scripts for sentiment analysis.
 - Trained a rough sentiment embedding using FastText model to improve recognition of negative sentiment.
-- Trained deep learning layers for Keras:
+- Trained deep learning models for Keras sentiment analysis:
   - Attention LSTM
   - Multiplicative LSTM
   - Nested LSTM
