@@ -43,10 +43,10 @@ X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size
 CLASS_WEIGHTS = 1. / np.asarray(SENTIMENT_CLASS_PRIORS)
 print("Class weights : ", CLASS_WEIGHTS)
 
-embedding_matrix = load_prepared_embedding_matrix()
+embedding_matrix = load_prepared_embedding_matrix(finetuned=True)
 embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
-                            #weights=[embedding_matrix],
-                            trainable=True)
+                            weights=[embedding_matrix],
+                            trainable=False)
 
 input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
 x = embedding_layer(input)
@@ -68,7 +68,7 @@ optimizer = Adam(lr=1e-3, amsgrad=True)
 model.compile(optimizer, loss='categorical_crossentropy', metrics=['accuracy', fbeta_score])
 
 # build the callbacks
-checkpoint = ModelCheckpoint(WEIGHT_STAMP, monitor='val_fbeta_score', verbose=1, save_weights_only=False,
+checkpoint = ModelCheckpoint(WEIGHT_STAMP, monitor='val_fbeta_score', verbose=1, save_weights_only=True,
                              save_best_only=True, mode='max')
 tensorboard = TensorBoardBatch(LOG_STAMP, batch_size=BATCHSIZE)
 lr_scheduler = ReduceLROnPlateau(monitor='val_fbeta_score', factor=np.sqrt(0.5), patience=5, verbose=1,
@@ -77,8 +77,8 @@ lr_scheduler = ReduceLROnPlateau(monitor='val_fbeta_score', factor=np.sqrt(0.5),
 callbacks = [checkpoint, tensorboard, lr_scheduler]
 
 # train model
-model.fit(X_train, y_train, batch_size=BATCHSIZE, epochs=NB_EPOCHS, verbose=1,
-          callbacks=callbacks, validation_data=(X_test, y_test), class_weight=CLASS_WEIGHTS)
+# model.fit(X_train, y_train, batch_size=BATCHSIZE, epochs=NB_EPOCHS, verbose=1,
+#           callbacks=callbacks, validation_data=(X_test, y_test), class_weight=CLASS_WEIGHTS)
 
 # load up the best weights
 model.load_weights(WEIGHT_STAMP)
@@ -97,21 +97,26 @@ predictions = np.argmax(predictions, axis=-1)
 
 compute_metrics(y_test, predictions, target_names=SENTIMENT_CLASS_NAMES)
 
+# preserve the embeddings to use with other models
+embedding_weights = model.get_layer('embedding_1').get_weights()[0]
+
+embedding_path = construct_data_path('models/embeddings/finetuned_embedding_matrix.npy')
+np.save(embedding_path, embedding_matrix)
+
 '''
-Accuracy : 51.69356268841994
+Accuracy : 63.50416740556837
 
 ************************* Classification Report *************************
              precision    recall  f1-score   support
 
-   negative     0.1944    0.3035    0.2370       827
-   positive     0.7091    0.6597    0.6835      3802
+   negative     0.2224    0.1439    0.1747       827
+   positive     0.6852    0.9053    0.7801      3802
 
-avg / total     0.6171    0.5960    0.6037      4629
+avg / total     0.6026    0.7693    0.6719      4629
 
 
 ************************* Confusion Matrix *************************
 negative   positive   
-[[ 251  436]
- [ 779 2508]]
-
+[[ 119  699]
+ [ 308 3442]]
 '''

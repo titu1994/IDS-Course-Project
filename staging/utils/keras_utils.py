@@ -193,7 +193,7 @@ def load_embedding_matrix(word_index: Dict, max_nb_words: int, embedding_dim: in
     return embedding_matrix
 
 
-def load_prepared_embedding_matrix() -> np.ndarray:
+def load_prepared_embedding_matrix(finetuned: bool=False) -> np.ndarray:
     '''
     Loads a prepared embedding matrix. Will throw an exception if the file has not
     been created first !
@@ -202,7 +202,13 @@ def load_prepared_embedding_matrix() -> np.ndarray:
         a prepared embedding matrix
     '''
     # load pre-built embedding matrix
-    path = 'models/embeddings/embedding_matrix.npy'
+    if not finetuned:
+        embedding_name = 'embedding_matrix.npy'
+    else:
+        logging.info('Loading finetuned embedding matrix')
+        embedding_name = 'finetuned_embedding_matrix.npy'
+
+    path = 'models/embeddings/%s' % embedding_name
     path = resolve_data_path(path)
 
     embedding_matrix = np.load(path)
@@ -272,25 +278,26 @@ def prepare_yelp_reviews_dataset_keras(path: str, max_nb_words: int, max_sequenc
     word_index = tokenizer.word_index  # obtain the word index map
     logging.info('Found %d unique 1-gram tokens.' % len(word_index))
 
-    ngram_set = set()
-    for input_list in sequences:
-        for i in range(2, ngram_range + 1):  # prepare the n-gram sentences
-            set_of_ngram = create_ngram_set(input_list, ngram_value=i)
-            ngram_set.update(set_of_ngram)
+    if ngram_range > 1:
+        ngram_set = set()
+        for input_list in sequences:
+            for i in range(2, ngram_range + 1):  # prepare the n-gram sentences
+                set_of_ngram = create_ngram_set(input_list, ngram_value=i)
+                ngram_set.update(set_of_ngram)
 
-    # Dictionary mapping n-gram token to a unique integer.
-    # Integer values are greater than max_features in order
-    # to avoid collision with existing features.
-    start_index = max_nb_words + 1 if max_nb_words is not None else (len(word_index) + 1)
-    token_indice = {v: k + start_index for k, v in enumerate(ngram_set)}
-    indice_token = {token_indice[k]: k for k in token_indice}
-    word_index.update(token_indice)
+        # Dictionary mapping n-gram token to a unique integer.
+        # Integer values are greater than max_features in order
+        # to avoid collision with existing features.
+        start_index = max_nb_words + 1 if max_nb_words is not None else (len(word_index) + 1)
+        token_indice = {v: k + start_index for k, v in enumerate(ngram_set)}
+        indice_token = {token_indice[k]: k for k in token_indice}
+        word_index.update(token_indice)
 
-    max_features = np.max(list(indice_token.keys())) + 1  # compute maximum number of n-gram "words"
-    logging.info('After N-gram augmentation, there are: %d features' % max_features)
+        max_features = np.max(list(indice_token.keys())) + 1  # compute maximum number of n-gram "words"
+        logging.info('After N-gram augmentation, there are: %d features' % max_features)
 
-    # Augmenting X_train and X_test with n-grams features
-    sequences = add_ngram(sequences, token_indice, ngram_range)  # add n-gram features to original dataset
+        # Augmenting X_train and X_test with n-grams features
+        sequences = add_ngram(sequences, token_indice, ngram_range)  # add n-gram features to original dataset
 
     logging.debug('Average sequence length: {}'.format(np.mean(list(map(len, sequences)), dtype=int))) # compute average sequence length
     logging.debug('Median sequence length: {}'.format(np.median(list(map(len, sequences))))) # compute median sequence length

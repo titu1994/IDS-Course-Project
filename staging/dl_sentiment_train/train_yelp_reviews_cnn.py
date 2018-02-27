@@ -11,21 +11,21 @@ from staging.utils.keras_utils import fbeta_score, TensorBoardBatch
 from staging.utils.sklearn_utils import SENTIMENT_CLASS_NAMES, SENTIMENT_CLASS_PRIORS
 from staging.utils.keras_utils import EMBEDDING_DIM, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH
 
-from keras.layers import Dense, Input, Dropout, BatchNormalization, Activation
-from keras.layers import Embedding, GlobalAveragePooling1D, concatenate
+from keras.layers import Dense, Input, Dropout, BatchNormalization, Activation, Reshape
+from keras.layers import Embedding, GlobalAveragePooling1D, concatenate, multiply
 from keras.layers import Conv1D
 from keras.models import Model
 from keras.regularizers import l2
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
+from keras import backend as K
 
-from staging.utils.layers.generic import PriorScaling
 
 # edit the model name
 MODEL_NAME = "cnn"
-NB_EPOCHS = 20
+NB_EPOCHS = 10
 BATCHSIZE = 512
-REGULARIZATION_STRENGTH = 0.0051
+REGULARIZATION_STRENGTH = 0.0
 
 # constants that dont need to be changed
 NB_SENTIMENT_CLASSES = 3
@@ -44,35 +44,54 @@ X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size
 CLASS_WEIGHTS = 1. / np.asarray(SENTIMENT_CLASS_PRIORS)
 print("Class weights : ", CLASS_WEIGHTS)
 
-embedding_matrix = load_prepared_embedding_matrix()
+embedding_matrix = load_prepared_embedding_matrix(finetuned=True)
 embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
-                            # weights=[embedding_matrix],
-                            trainable=True)
+                            weights=[embedding_matrix],
+                            trainable=False)
+
+
+def squeeze_excite_block(input):
+    ''' Create a squeeze-excite block
+    Args:
+        input: input tensor
+        filters: number of output filters
+        k: width factor
+
+    Returns: a keras tensor
+    '''
+    filters = K.int_shape(input)[-1] # channel_axis = -1 for TF
+
+    se = GlobalAveragePooling1D()(input)
+    se = Reshape((1, filters))(se)
+    se = Dense(filters // 16,  activation='relu', kernel_initializer='he_normal')(se)
+    se = Dense(filters, activation='sigmoid', kernel_initializer='he_normal')(se)
+    se = multiply([input, se])
+    return se
+
 
 input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
 x = embedding_layer(input)
-w = Dropout(0.5)(x)
+x = Dropout(0.5)(x)
 
-x = Conv1D(8, 8, padding='same', kernel_initializer='he_normal', dilation_rate=1,
-           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(w)
+x = Conv1D(128, 3, padding='same', kernel_initializer='he_normal', dilation_rate=1,
+           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
+x = BatchNormalization(axis=-1)(x)
+x = Activation('relu')(x)
+x = squeeze_excite_block(x)
+
+x = Conv1D(128, 3, padding='same', kernel_initializer='he_normal', dilation_rate=1,
+           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
+x = BatchNormalization(axis=-1)(x)
+x = Activation('relu')(x)
+x = squeeze_excite_block(x)
+
+x = Conv1D(128, 3, padding='same', kernel_initializer='he_normal', dilation_rate=1,
+           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
 x = BatchNormalization(axis=-1)(x)
 x = Activation('relu')(x)
 
-y = Conv1D(16, 5, padding='same', kernel_initializer='he_normal', dilation_rate=2,
-           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(w)
-y = BatchNormalization(axis=-1)(y)
-y = Activation('relu')(y)
-
-z = Conv1D(32, 3, padding='same', kernel_initializer='he_normal', dilation_rate=3,
-           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(w)
-z = BatchNormalization(axis=-1)(z)
-z = Activation('relu')(z)
-
-w = concatenate([x, y, z], axis=-1)
-
-x = GlobalAveragePooling1D()(w)
+x = GlobalAveragePooling1D()(x)
 x = Dense(NB_SENTIMENT_CLASSES, activation='softmax', kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-#x = PriorScaling(SENTIMENT_CLASS_PRIORS)(x)
 
 model = Model(input, x, name=MODEL_NAME)
 model.summary()
@@ -81,8 +100,8 @@ optimizer = Adam(lr=1e-3, amsgrad=True)
 model.compile(optimizer, loss='categorical_crossentropy', metrics=['accuracy', fbeta_score])
 
 # build the callbacks
-checkpoint = ModelCheckpoint(WEIGHT_STAMP, monitor='val_fbeta_score', verbose=1, save_weights_only=False,
-                             save_best_only=True, mode='max')
+checkpoint = ModelCheckpoint(WEIGHT_STAMP, monitor='val_fbeta_score', verbose=1, save_weights_only=True,
+                             save_best_only=False, mode='max')
 tensorboard = TensorBoardBatch(LOG_STAMP, batch_size=BATCHSIZE)
 lr_scheduler = ReduceLROnPlateau(monitor='val_fbeta_score', factor=np.sqrt(0.5), patience=5, verbose=1,
                                  mode='min', min_lr=1e-5)
