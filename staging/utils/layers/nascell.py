@@ -4,6 +4,7 @@ from keras import initializers
 from keras import regularizers
 from keras import constraints
 from keras import backend as K
+from keras.layers.recurrent import _generate_dropout_mask, _generate_dropout_ones
 #from keras.layers import RNN
 
 #import tensorflow as tf
@@ -264,6 +265,20 @@ class NASCell(Layer):
             self._recurrent_dropout_mask = None
 
     def call(self, inputs, states, training=None):
+        if 0 < self.dropout < 1 and self._dropout_mask is None:
+            self._dropout_mask = _generate_dropout_mask(
+                _generate_dropout_ones(inputs, K.shape(inputs)[-1]),
+                self.dropout,
+                training=training,
+                count=8)
+        if (0 < self.recurrent_dropout < 1 and self._recurrent_dropout_mask is None):
+            _nested_recurrent_mask = _generate_dropout_mask(
+                _generate_dropout_ones(inputs, self.units),
+                self.recurrent_dropout,
+                training=training,
+                count=8)
+            self._recurrent_dropout_mask = _nested_recurrent_mask
+
         # dropout matrices for input units
         dp_mask = self._dropout_mask
         # dropout matrices for recurrent units
