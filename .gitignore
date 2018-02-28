@@ -57,6 +57,7 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+tests/**/.*
 
 # Translations
 *.mo
@@ -111,3 +112,5 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+staging/**/.*

@@ -171,6 +171,8 @@ def compute_metrics(y_true: np.ndarray, y_preds: np.ndarray, target_names: List[
     print(conf)
     print()
 
+    return acc
+
 
 def make_f1_scorer(clf, X, y):
     '''

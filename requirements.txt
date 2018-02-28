@@ -11,3 +11,5 @@ html5lib
 requests
 joblib
 imbalanced-learn
+pytest
+pytest-cov
