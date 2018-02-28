@@ -47,3 +47,13 @@ def test_fbeta_score():
 
     assert metric is not None
     assert np.allclose([f1_score], [0.399999], rtol=1e-4)
+
+
+def test_tensorboard():
+    callback = keras_utils.TensorBoardBatch(histogram_freq=True,
+                                            write_grads=True,
+                                            write_graph=True,
+                                            write_images=True,
+                                            embeddings_freq=1)
+
+    assert callback is not None

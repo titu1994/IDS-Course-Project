@@ -13,3 +13,4 @@ joblib
 imbalanced-learn
 pytest
 pytest-cov
+coverage

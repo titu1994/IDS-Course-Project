@@ -88,7 +88,7 @@ def test_nas_cell():
     K.clear_session()
 
     ip = Input(shape=(5, 10))
-    x = RNN(NASCell(8, dropout=0.2, recurrent_dropout=0.2))(ip)
+    x = RNN(NASCell(8, dropout=0.2, recurrent_dropout=0.2, implementation=1))(ip)
     model = Model(ip, x)
 
     assert model.output_shape == (None, 8)
@@ -100,6 +100,14 @@ def test_nas_cell():
     model = Model(ip, x)
 
     assert model.output_shape == (None, 5, 8)
+
+    K.clear_session()
+
+    ip = Input(shape=(5, 10))
+    x = RNN(NASCell(8, projection_units=2, implementation=2), return_sequences=True)(ip)
+    model = Model(ip, x)
+
+    assert model.output_shape == (None, 5, 2)
 
 
 def test_prior_scaling():
