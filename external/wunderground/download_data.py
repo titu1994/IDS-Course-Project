@@ -9,7 +9,7 @@ from key import _PRIVATE_KEY
 start_year = 2018
 start_month = 1
 start_date = 31
-zip_code = 60601
+zip_code = 60604
 
 begin_date = date(start_year, start_month, start_date)
 delta = timedelta(days=1)
