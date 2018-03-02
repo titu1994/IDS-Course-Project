@@ -80,7 +80,7 @@ def load_dataframe(file):
     df['Name'] = df.apply(clean_name, axis=1).astype(np.str)
     df['Category'] = df['Category'].astype(np.str)
     df['Price'] = df.apply(clean_price, axis=1)  #
-    df['Reviews'] = df['Reviews'].apply(clean_reviews)
+    df['ReviewCount'] = df['ReviewCount'].apply(clean_reviews)
     #df['Alcohol'] = alcohol
     df['Pincode'] = df.apply(get_pin_code, axis=1)
 
@@ -132,3 +132,6 @@ df.to_csv(save_path, index=True, index_label='id', header=True, encoding='utf-8'
 
 names = df['Name'].values
 print('\n\n,', names.tolist())
+
+urls = df['YelpURL'].values
+print("\n\n", urls.tolist())

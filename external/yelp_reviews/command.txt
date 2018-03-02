@@ -6,3 +6,6 @@ scrapy crawl yelpreviews -o yelp_reviews.json
 
 # users
 scrapy crawl yelp_users -o yelp_users.json
+
+# businesses
+scrapy crawl yelp_business -o yelp_business.json

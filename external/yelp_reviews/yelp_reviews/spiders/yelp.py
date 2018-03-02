@@ -5,7 +5,7 @@ locations = ["Chicago,+IL+%d", "%d"]
 pincodes = [60604,]
 types = ['Restaurants',]
 
-class YelpReviewSpider(scrapy.Spider):
+class YelpDataSpider(scrapy.Spider):
     name = 'yelp_data_old'
 
     def start_requests(self):
@@ -37,7 +37,7 @@ class YelpReviewSpider(scrapy.Spider):
             yield response.follow(next, callback=self.parse)
 
 
-class YelpReviewSpider2(scrapy.Spider):
+class YelpDataSpider2(scrapy.Spider):
     name = 'yelp_data'
 
     def start_requests(self):
@@ -69,6 +69,8 @@ class YelpReviewSpider2(scrapy.Spider):
 
             address = ", ".join(place.xpath("div/div[1]/div[2]/address/text()").extract()).strip()
 
+            business_url = place.xpath('div/div[1]/div[1]/div/div[2]/h3/span/a/@href').extract_first()
+
             phone = place.xpath("div/div[1]/div[2]/span[3]/text()").extract_first()
             if phone is not None:
                 phone = phone.strip()
@@ -76,12 +78,13 @@ class YelpReviewSpider2(scrapy.Spider):
             yield {
                 'Name': name,
                 'Ratings': ratings,
-                'Reviews': reviews,
+                'ReviewCount': reviews,
                 'Price': price,
                 'Category': category,
                 'Neighbourhood': neighbourhood,
                 'Address': address,
                 'Phone': phone,
+                'YelpURL': business_url,
             }
 
         response.selector.remove_namespaces()

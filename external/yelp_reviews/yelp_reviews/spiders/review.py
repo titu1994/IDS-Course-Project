@@ -184,9 +184,13 @@ class YelpReviewSpider(scrapy.Spider):
         user_ids = response.xpath('//a[contains(@class, "user-display-name")]/@href').extract()
         review_ids = response.xpath('//div[contains(@class, "review")]/@data-review-id').extract()
 
+        scores = response.xpath('//li[contains(@class, "vote-item")]/a/span/text()').extract()
+        scores = list(filter(lambda x: '\n' not in x, scores))
+        score_index = 0
+
         self.logger.info("Restaurant Name" + restaurant_name + ": Number of ratings = " + str(len(ratings)))
 
-        for i, (rating, review_para, user_id, review_id) in enumerate(zip(ratings, reviews_, user_ids, review_ids)):
+        for i, (rating, review_para, user_id, review_id, business_url) in enumerate(zip(ratings, reviews_, user_ids, review_ids, business_urls)):
             # clean rating
             rating = int(rating[0])
 
@@ -198,6 +202,34 @@ class YelpReviewSpider(scrapy.Spider):
 
             user_id = user_id[21:]
 
+            useful_key = scores[score_index]
+            try:
+                val = int(scores[score_index + 1])
+                useful_value = val
+                score_index += 2
+            except:
+                useful_value = 0
+                score_index += 1
+
+            funny_key = scores[score_index]
+            try:
+                val = int(scores[score_index + 1])
+                funny_value = val
+                score_index += 2
+            except:
+                funny_value = 0
+                score_index += 1
+
+            cool_key = scores[score_index]
+            try:
+                val = int(scores[score_index + 1])
+                cool_value = val
+                score_index += 2
+            except:
+                cool_value = 0
+                score_index += 1
+
+
             item = {
                 'restaurant_name': restaurant_name,
                 'review': review,
@@ -205,6 +237,9 @@ class YelpReviewSpider(scrapy.Spider):
                 'user_id': user_id,
                 'business_id': business_id,
                 'review_id': review_id,
+                useful_key + 'Count': useful_value,
+                funny_key + 'Count': funny_value,
+                cool_key + 'Count': cool_value,
             }
             yield item
 
