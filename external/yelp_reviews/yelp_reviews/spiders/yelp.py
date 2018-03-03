@@ -71,6 +71,8 @@ class YelpDataSpider2(scrapy.Spider):
 
             business_url = place.xpath('div/div[1]/div[1]/div/div[2]/h3/span/a/@href').extract_first()
 
+            business_id = place.xpath('div/@data-biz-id').extract_first()
+
             phone = place.xpath("div/div[1]/div[2]/span[3]/text()").extract_first()
             if phone is not None:
                 phone = phone.strip()
@@ -85,6 +87,7 @@ class YelpDataSpider2(scrapy.Spider):
                 'Address': address,
                 'Phone': phone,
                 'YelpURL': business_url,
+                'BusinessID': business_id,
             }
 
         response.selector.remove_namespaces()
