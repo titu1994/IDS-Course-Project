@@ -42,25 +42,26 @@ title: Weekly Report 4 - Feb 23 - Mar 02 2018
 # Debojit
 
 ### What I did
-- Scraped the data sets I wanted to gather.
-- Discussed more pipeline changes which seemed redundant after last week.
-- Tried out some visualization frameworks anf libraries like JS Charts, High Charts and learnt a little bit of d3.js to know what it is about.
+- Gathered data from Wunderground API and ran some script on it to understand it more personally
+- Started building the backend service we plan on talking to using Django
+- Discovered Deck.gl and tried using it to map some test maps. Discussed further UI decisions
 
 ### What I plan to do next week
-- Clean the scraped data and integrate it with our current directory structure
-- Try to establish the connections which were discussed by us between datasets and see if they are actually feasible. This will allow us to see any holes in our ideas as well as asymmetry between datasets schemas.
-- Discuss and implement atleast one Machine learning approach in addition to the other teammates efforts.
+- Finish basic server setup and give teammates a platform to host their respective code on
+- Contribute to front-end solution with building user inputs using ReactJS
+- Help finalise what charts are the best for which form of data and test plot it
 
 ### Blocks or impediments to the plan for next week
-- None other than usual snags in scraping from different sites according to their HTML structure and heirarchy.
-- Long tutorials for some simple concepts took some of my time which could have been done sooner with a better choice of tutorial to follow. No technical difficulty yet.
+- Setting up some front end design and user flow
+- Deck.gl seems attractive yet might not be the best solution as of now
 
 # Christopher
 
 ### What I did
 - Scraped data from Wunderground API for weather 
 - Explored and worked on understanding yelp data scrapping 
-- Worked on Report 2 , and was discussed the project pipeline.
+- Worked on Report 2 , and was discussed the project pipeline
+
 ### What I plan to do next week
 - Work on yelp data scrapping and presenting it.
 - Understand the output from data analytics and integration phase.
