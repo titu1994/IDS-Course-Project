@@ -58,15 +58,15 @@ title: Weekly Report 4 - Feb 23 - Mar 02 2018
 # Christopher
 
 ### What I did
-- Updated project structure and core modules that will be built later
-- Looked at Census.Gov and CityofChicago Datasets and work related to Demographics information.
-- Tried some tutorials on data extraction.
-
+- Scraped data from Wunderground API for weather 
+- Explored and worked on understanding yelp data scrapping 
+- Worked on Report 2 , and was discussed the project pipeline.
 ### What I plan to do next week
-- Apply what has been understood for the data extraction.
-- Work with the team in scrapping the yelp data as per the specifications provided.
-- Learn more on visualization.
+- Work on yelp data scrapping and presenting it.
+- Understand the output from data analytics and integration phase.
+- Try to explore more on the visualization and webpage aspects. 
 
 ### Blocks or impediments to the plan for next week
-- Nothing unprecedented, like pointed above the integration of data could need some extra effort.
+- Identifying the right libraries for each of the task will be an impediment.
+
 
