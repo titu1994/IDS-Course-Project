@@ -7,19 +7,19 @@ title: Weekly Report 4 - Feb 23 - Mar 02 2018
 
 ### What I did
 
-- Experimented with Decision Trees and Random Forrests from Scikit
-- Experimented with simple XGBoost
-- Explored ways to play around with text data using NLTK
+- Scraped Wunderground API data for last 5 years
+- Used RandomSearch to finetune XGBoost parameters
+- Experimented with running MLP in Caffe2
 
 ### What I plan to do next week
 
-- Scrape Yelp and Wunderground (weather) data
-- Use GridSearchCV, RandomizedSearchCV for parameter tuning for various ML models
+- Data integration with Pandas, Seaborn, and Dora
+- Test out Keras implementations of regression models for crime prediction
 - Start on data visualization libraries
 
 ### Blocks or impediments to the plan for next week
 
-- The main issue will be scraping the Yelp and Wunderground (weather) data. Cleaning the data will also require some clever tricks to avoid just dropping rows with null or invalid values.
+- The main issue will be integrating data.
 
 # Somshubra
 
