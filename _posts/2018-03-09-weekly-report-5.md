@@ -44,18 +44,18 @@ title: Weekly Report 5 - Mar 02 2018 - Mar 09 2018
 # Debojit
 
 ### What I did
-- Gathered data from Wunderground API and ran some script on it to understand it more personally
-- Started building the backend service we plan on talking to using Django
-- Discovered Deck.gl and tried using it to map some test maps. Discussed further UI decisions
+- Setup test project in Django and DRF
+- Got a remote machine on AWS and pushed code to it but without making it public
+- Planned on UI changes
 
 ### What I plan to do next week
-- Finish basic server setup and give teammates a platform to host their respective code on
-- Contribute to front-end solution with building user inputs using ReactJS
+- Finish server setup and make it testable
+- Finish up backend and test server and move on to help on the front-end.
 - Help finalise what charts are the best for which form of data and test plot it
 
 ### Blocks or impediments to the plan for next week
 - Setting up some front end design and user flow
-- Deck.gl seems attractive yet might not be the best solution as of now
+- AWS setup is relatively tedious but nothing unmanageable
 
 # Christopher
 
@@ -71,5 +71,3 @@ title: Weekly Report 5 - Mar 02 2018 - Mar 09 2018
 
 ### Blocks or impediments to the plan for next week
 - Identifying the right libraries for each of the task will be an impediment.
-
-
