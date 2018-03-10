@@ -7,19 +7,19 @@ title: Weekly Report 5 - Mar 02 2018 - Mar 09 2018
 
 ### What I did
 
-- Scraped Wunderground API data for last 5 years
-- Used RandomSearch to finetune XGBoost parameters
-- Experimented with running MLP in Caffe2
+- Researched Nested LSTMs for Sentiment Analysis
+- Learned about D3 visualization techniques
+- Experimented with Deck GL for map data visualization
 
 ### What I plan to do next week
 
-- Data integration with Pandas, Seaborn, and Dora
-- Test out Keras implementations of regression models for crime prediction
-- Start on data visualization libraries
+- More lightweight visualization techniques
+- Integration of weather, Yelp data with other types of data
+- Explore ways to minimize data redundancy and loss in data integration
 
 ### Blocks or impediments to the plan for next week
 
-- The main issue will be integrating data.
+- None for now.
 
 # Somshubra
 
