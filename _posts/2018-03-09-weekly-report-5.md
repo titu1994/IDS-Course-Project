@@ -60,14 +60,14 @@ title: Weekly Report 5 - Mar 02 2018 - Mar 09 2018
 # Christopher
 
 ### What I did
-- Scraped data from Wunderground API for weather
+- Explored visualization libraries like D3, bokeh.
 - Explored and worked on understanding yelp data scrapping
-- Worked on Report 2 , and was discussed the project pipeline
+- Attended Project guidance session held by the TAs
 
 ### What I plan to do next week
-- Work on yelp data scrapping and presenting it.
-- Understand the output from data analytics and integration phase.
-- Try to explore more on the visualization and webpage aspects.
+- Work on the next deliverable, manual data set reference.
+- Try out the relevant visualization libraries.
+- Read about sentiment analysis, and ml models.
 
 ### Blocks or impediments to the plan for next week
 - Identifying the right libraries for each of the task will be an impediment.
