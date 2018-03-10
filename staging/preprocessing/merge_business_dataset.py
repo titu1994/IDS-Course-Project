@@ -60,6 +60,13 @@ def set_nan_to_empty(df:pd.DataFrame, col_names):
     df[col_names] = df[col_names].fillna("")
     return df
 
+def set_location(df):
+    address = df['Address']
+    neighbourhood = df['location']
+
+    data = address + " Neighbourhood : " + neighbourhood
+    return data
+
 
 dataset_path = resolve_data_path('raw/yelp/cleaned_yelp_ratings.csv')
 df = pd.read_csv(dataset_path, header=0, encoding='utf-8', index_col='id')  # type: pd.DataFrame
@@ -91,6 +98,8 @@ merged_rename_dict = {
 
 merged_df = drop_columns(merged_df, merged_drop_cols)
 merged_df = rename_columns(merged_df, merged_rename_dict)
+
+merged_df['location'] = merged_df.apply(set_location, axis=1)
 
 print(merged_df.info())
 

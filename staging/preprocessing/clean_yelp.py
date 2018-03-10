@@ -5,7 +5,7 @@ import re
 from staging import construct_data_path, resolve_data_path
 
 basepath = "raw/yelp/"
-pin_codes = [60604,]
+pin_codes = [60604, 60612]
 # Ref: https://stackoverflow.com/questions/2779453/python-strip-everything-but-spaces-and-alphanumeric
 clean_name_pattern = re.compile(r'([^\s\w]|_)+')
 
@@ -121,7 +121,7 @@ df = load_dataframe(dataset_path)
 print()
 print(df.info())
 
-df = df.drop_duplicates(subset=['Name'])
+df = df.drop_duplicates(subset=['BusinessID'])
 
 print()
 print(df.info())

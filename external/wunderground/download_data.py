@@ -6,9 +6,9 @@ from datetime import date, timedelta
 from key import _PRIVATE_KEY
 
 # Variables
-start_year = 2018
-start_month = 1
-start_date = 31
+start_year = 2013
+start_month = 12
+start_date = 22
 zip_code = 60604
 
 begin_date = date(start_year, start_month, start_date)
@@ -42,7 +42,7 @@ with open(outPath, 'a+', newline='') as csvfile:
             print("Finished processing %d requests" % (i + 1))
             print("Sleeping for 1 minute to avoid excess API calls")
             print()
-            time.sleep(65)
+            #time.sleep(65)
 
         r = requests.get('http://api.wunderground.com/api/' + api + '/history_' + day + '/q/' + str(zip_code) + '.json')
         data = r.json()['history']['observations']
