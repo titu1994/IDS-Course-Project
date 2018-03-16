@@ -17,8 +17,8 @@ if __name__ == '__main__':
     n_estimators = 500
     max_depth = 6
 
-    reviews_path = resolve_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
-    data, labels = prepare_yelp_reviews_dataset_sklearn(reviews_path, nb_sentiment_classes=3)
+    reviews_path = resolve_data_path('datasets/yelp-reviews/reviews.csv')
+    data, labels = prepare_yelp_reviews_dataset_sklearn(reviews_path, nb_sentiment_classes=2)
 
     X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size=0.1)
 
@@ -59,26 +59,24 @@ TF-IDF transformer loaded from saved state !
 Shape of tf-idf transformed datased :  (56383, 1575218)
 Train set size: (50744, 1575218)
 Test set size: (5639, 1575218)
-Train set class distribution : [0.14667744 0.17911477 0.67420779]
-Test set class distribution : [0.14665721 0.17910977 0.67423302]
-Fitting 5 folds for each of 20 candidates, totalling 100 fits
-
-Best Parameters :  {'n_estimators': 500, 'max_depth': 6}
-Accuracy : 48.37737187444582
+Train set class distribution : [0.32579221 0.67420779]
+Test set class distribution : [0.32576698 0.67423302]
+Accuracy : 62.2982798368505
 
 ************************* Classification Report *************************
              precision    recall  f1-score   support
 
-   negative     0.2305    0.4281    0.2996       827
-   positive     0.7416    0.5608    0.6386      3802
+   negative     0.4283    0.4698    0.4481      1837
+   positive     0.7312    0.6970    0.7137      3802
 
-avg / total     0.6503    0.5370    0.5780      4629
+avg / total     0.6325    0.6230    0.6272      5639
 
 
 ************************* Confusion Matrix *************************
 negative   positive   
-[[ 354  295]
- [ 862 2132]]
+[[ 863  974]
+ [1152 2650]]
 
 Finished training model !
+
 """

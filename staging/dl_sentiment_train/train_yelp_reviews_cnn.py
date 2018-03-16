@@ -33,7 +33,7 @@ TIMESTAMP = time.strftime("%Y-%m-%d-%H-%M-%S")
 LOG_STAMP = construct_data_path('models/keras/sentiment/logs/%s/%s' % (MODEL_NAME, TIMESTAMP))
 WEIGHT_STAMP = construct_data_path('models/keras/sentiment/weights/%s_weights.h5' % (MODEL_NAME))
 
-reviews_path = resolve_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
+reviews_path = resolve_data_path('datasets/yelp-reviews/reviews.csv')
 data, labels, _ = prepare_yelp_reviews_dataset_keras(reviews_path, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH,
                                                      nb_sentiment_classes=NB_SENTIMENT_CLASSES)
 

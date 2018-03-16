@@ -36,7 +36,7 @@ def load_dataset(path : str) -> pd.DataFrame:
     return df
 
 
-def add_sentiment_classes(df: pd.DataFrame, key: str, nb_classes: int = 3) -> pd.DataFrame:
+def add_sentiment_classes(df: pd.DataFrame, key: str, nb_classes: int = 2) -> pd.DataFrame:
     '''
     Adds the class label for sentiment analysis to
     Args:
@@ -235,7 +235,7 @@ def tfidf(tokens) -> np.ndarray:
     return x_tfidf
 
 
-def prepare_yelp_reviews_dataset_sklearn(path : str, nb_sentiment_classes : int = 3) -> (np.array, np.array):
+def prepare_yelp_reviews_dataset_sklearn(path : str, nb_sentiment_classes : int = 2) -> (np.array, np.array):
     '''
     Loads the yelp reviews dataset for Scikit-learn models,
     prepares them by adding the class label and cleaning the
@@ -318,11 +318,18 @@ def plot_yelp_dataset_info(df: pd.DataFrame):
 
 if __name__ == '__main__':
     from staging import resolve_data_path
+    logging.basicConfig(level=logging.INFO)
 
-    reviews_path = resolve_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
+    #reviews_path = resolve_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
+    reviews_path = resolve_data_path('raw/yelp-reviews/reviews_60601-60606.csv')
     #prepare_yelp_reviews_dataset_sklearn(reviews_path, nb_sentiment_classes=3)
 
-    df = pd.read_csv(reviews_path, header=0, encoding='utf-8', index_col='id')
+    df = pd.read_csv(reviews_path, header=0, encoding='utf-8', error_bad_lines=False)
+
+    df = df.rename(columns={
+        'reviewContent': 'review'
+    })
+
     df = add_sentence_length(df, key='review')
     df = add_sentiment_classes(df, key='rating', nb_classes=3)
     df = remove_stopwords_punctuation(df, key='review', return_sentence=True)

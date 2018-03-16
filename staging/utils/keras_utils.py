@@ -17,6 +17,7 @@ from staging.utils.text_utils import prepare_yelp_reviews_dataset_keras as _prep
 EMBEDDING_DIM = 300
 MAX_NB_WORDS = 105000
 MAX_SEQUENCE_LENGTH = 280
+F_BETA = 5.
 
 
 '''
@@ -109,7 +110,7 @@ def fbeta_score(y_true, y_pred):
 
     precision = precision(y_true, y_pred)
     recall = recall(y_true, y_pred)
-    return 2 * ((precision * recall) / (precision + recall + K.epsilon()))
+    return (1 + (F_BETA ** 2)) * ((precision * recall) / ((F_BETA ** 2) * precision + recall + K.epsilon()))
 
 
 def load_embedding_matrix(word_index: Dict, max_nb_words: int, embedding_dim: int, print_error_words: bool=True) -> np.ndarray:
@@ -312,7 +313,7 @@ if __name__ == '__main__':
     from staging import resolve_data_path
     logging.basicConfig(level=logging.INFO)
 
-    reviews_path = resolve_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
+    reviews_path = resolve_data_path('datasets/yelp-reviews/reviews.csv')
 
     # construct the tokenizer
     data, labels, word_index = prepare_yelp_reviews_dataset_keras(reviews_path, max_nb_words=MAX_NB_WORDS,

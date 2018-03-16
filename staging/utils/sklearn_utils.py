@@ -13,7 +13,7 @@ from sklearn.utils.class_weight import compute_class_weight as _compute_class_we
 from staging import to_categorical, _get_predictions, construct_data_path
 
 SENTIMENT_CLASS_NAMES = ['negative', 'positive']
-SENTIMENT_CLASS_PRIORS = [0.14667744, 0.17911477, 0.67420779]
+SENTIMENT_CLASS_PRIORS = [0.36006913, 0.63993087]
 
 
 def create_train_test_set(X: np.ndarray, y: np.ndarray,
@@ -155,8 +155,11 @@ def compute_metrics(y_true: np.ndarray, y_preds: np.ndarray, target_names: List[
     print('Accuracy :', acc * 100)
     print()
 
+    classes_ = len(np.unique(y_true))
+    labels = None if classes_ == 2 else [0, 2]
+
     print('*' * 25, 'Classification Report', '*' * 25)
-    report = classification_report(y_true, y_preds, labels=[0, 2], target_names=target_names, digits=4)
+    report = classification_report(y_true, y_preds, labels=labels, target_names=target_names, digits=4)
     print(report)
     print()
 
@@ -167,7 +170,7 @@ def compute_metrics(y_true: np.ndarray, y_preds: np.ndarray, target_names: List[
             strng = strng + '%s   ' % name
         print(strng)
 
-    conf = confusion_matrix(y_true, y_preds, labels=[0, 2])
+    conf = confusion_matrix(y_true, y_preds, labels=labels)
     print(conf)
     print()
 

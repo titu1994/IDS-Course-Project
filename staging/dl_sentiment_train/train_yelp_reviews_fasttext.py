@@ -27,26 +27,26 @@ BATCHSIZE = 512
 REGULARIZATION_STRENGTH = 0.0051
 
 # constants that dont need to be changed
-NB_SENTIMENT_CLASSES = 3
+NB_SENTIMENT_CLASSES = 2
 TIMESTAMP = time.strftime("%Y-%m-%d-%H-%M-%S")
 LOG_STAMP = construct_data_path('models/keras/sentiment/logs/%s/%s' % (MODEL_NAME, TIMESTAMP))
 WEIGHT_STAMP = construct_data_path('models/keras/sentiment/weights/%s_weights.h5' % (MODEL_NAME))
 
-reviews_path = resolve_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
+reviews_path = resolve_data_path('datasets/yelp-reviews/reviews.csv')
 data, labels, _ = prepare_yelp_reviews_dataset_keras(reviews_path, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH,
                                                      nb_sentiment_classes=NB_SENTIMENT_CLASSES)
 
 X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size=0.1,
-                                                         rebalance_class_distribution=True,
-                                                         cache=True)
+                                                         rebalance_class_distribution=False,
+                                                         cache=False)
 
 CLASS_WEIGHTS = 1. / np.asarray(SENTIMENT_CLASS_PRIORS)
 print("Class weights : ", CLASS_WEIGHTS)
 
-embedding_matrix = load_prepared_embedding_matrix(finetuned=True)
+embedding_matrix = load_prepared_embedding_matrix(finetuned=False)
 embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
                             weights=[embedding_matrix],
-                            trainable=False)
+                            trainable=True)
 
 input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
 x = embedding_layer(input)
@@ -59,7 +59,7 @@ x = Activation('relu')(x)
 x = Dropout(0.2)(x)
 
 x = Dense(NB_SENTIMENT_CLASSES, activation='softmax', kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-x = PriorScaling(SENTIMENT_CLASS_PRIORS)(x)
+#x = PriorScaling(SENTIMENT_CLASS_PRIORS)(x)
 
 model = Model(input, x, name=MODEL_NAME)
 model.summary()
@@ -77,8 +77,8 @@ lr_scheduler = ReduceLROnPlateau(monitor='val_fbeta_score', factor=np.sqrt(0.5),
 callbacks = [checkpoint, tensorboard, lr_scheduler]
 
 # train model
-# model.fit(X_train, y_train, batch_size=BATCHSIZE, epochs=NB_EPOCHS, verbose=1,
-#           callbacks=callbacks, validation_data=(X_test, y_test), class_weight=CLASS_WEIGHTS)
+model.fit(X_train, y_train, batch_size=BATCHSIZE, epochs=NB_EPOCHS, verbose=1,
+          callbacks=callbacks, validation_data=(X_test, y_test), class_weight=CLASS_WEIGHTS)
 
 # load up the best weights
 model.load_weights(WEIGHT_STAMP)
