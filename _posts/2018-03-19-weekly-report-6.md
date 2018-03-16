@@ -24,20 +24,18 @@ title: Weekly Report 6 - Mar 09 2018 - Mar 16 2018
 
 ### What I did
 
-- Finish scraping full yelp dataset
-- Finish scraping full Wunderground weather dataset
-- Prepared the codebase for the manual reference datasets of next week
+- Begin integration of master dataset
+- Begin developing the logic for creating the datasets that will be used for the queries
+- Trained Sentiment models on the reference Yelp dataset provided.
 
 ### What I plan to do next week
 
-- See the data stored in the manual datasets.
 - Prepare scripts to clean if required
-- Prepare training of Sentiment models on the reference Yelp dataset when provided.
 - Begin integrating the manual datasets with our collection of data.
 
 ### Blocks or impediments to the plan for next week
 
-- Will probably work on this after Tuesday due to midterm.
+- No blocks currently.
 - Expect the integration task to go over smoothly. We will assign an integration manager to oversee this task.
 
 # Debojit
