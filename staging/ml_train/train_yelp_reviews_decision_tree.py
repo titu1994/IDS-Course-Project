@@ -22,29 +22,31 @@ if __name__ == '__main__':
     X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size=0.1)
 
     ''' Grid Search for best param_grid '''
-    param_grid = {
-        'max_depth': [3, 4, 5, 6],
-        'criterion': ['gini', 'entropy'],
-    }
-    clf = DecisionTreeClassifier(random_state=1, class_weight='balanced')
-    gclf = GridSearchCV(clf, param_grid, scoring=make_f1_scorer, n_jobs=2,
-                        cv=CROSS_VALIDATION, verbose=10)
-
-    gclf.fit(X_train, y_train)
-    print("Best Parameters : ", gclf.best_params_)
-
-    clf = gclf.best_estimator_
-    y_preds = clf.predict(X_test)
-    compute_metrics(y_test, y_preds, target_names=SENTIMENT_CLASS_NAMES)
+    # param_grid = {
+    #     'max_depth': [3, 4, 5, 6],
+    #     'criterion': ['gini', 'entropy'],
+    # }
+    # clf = DecisionTreeClassifier(random_state=1, class_weight='balanced')
+    # gclf = GridSearchCV(clf, param_grid, scoring=make_f1_scorer, n_jobs=2,
+    #                     cv=CROSS_VALIDATION, verbose=10)
+    #
+    # gclf.fit(X_train, y_train)
+    # print("Best Parameters : ", gclf.best_params_)
+    #
+    # clf = gclf.best_estimator_
+    # y_preds = clf.predict(X_test)
+    # compute_metrics(y_test, y_preds, target_names=SENTIMENT_CLASS_NAMES)
 
     ''' Train final model after hyper-parameter search '''
-    # clf = DecisionTreeClassifier(max_depth=max_depth, class_weight='balanced',
-    #                              random_state=1)
-    # clf.fit(X_train, y_train)
-    #
-    # y_preds = clf.predict(X_test)
-    #
-    # compute_metrics(y_test, y_preds, target_names=SENTIMENT_CLASS_NAMES)
+    clf = DecisionTreeClassifier(max_depth=max_depth,
+                                 criterion='gini',
+                                 class_weight='balanced',
+                                 random_state=1)
+    clf.fit(X_train, y_train)
+
+    y_preds = clf.predict(X_test)
+
+    compute_metrics(y_test, y_preds, target_names=SENTIMENT_CLASS_NAMES)
 
     clf_path = 'models/sklearn/sentiment/decision_tree.pkl'
     clf_path = construct_data_path(clf_path)
