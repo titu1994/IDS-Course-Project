@@ -57,14 +57,13 @@ title: Weekly Report 6 - Mar 09 2018 - Mar 16 2018
 # Christopher
 
 ### What I did
-- Explored visualization libraries like D3, bokeh.
-- Explored and worked on understanding yelp data scrapping
-- Attended Project guidance session held by the TAs
+- Tested out the relevant visualization libraries.
+- Read about sentiment analysis, and ml models.
 
 ### What I plan to do next week
 - Work on the next deliverable, manual data set reference.
-- Try out the relevant visualization libraries.
-- Read about sentiment analysis, and ml models.
+- Decide on the charts to be visualised
+- Explore options in UI.
 
 ### Blocks or impediments to the plan for next week
 - Identifying the right libraries for each of the task will be an impediment.
