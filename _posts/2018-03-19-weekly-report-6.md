@@ -41,18 +41,17 @@ title: Weekly Report 6 - Mar 09 2018 - Mar 16 2018
 # Debojit
 
 ### What I did
-- Setup test project in Django and DRF
-- Got a remote machine on AWS and pushed code to it but without making it public
-- Planned on UI changes
+- Completed remote machine setup and pulled code.
+- Tested a few pushes on the server and checked reliability.
+- Planning Graphs and literature survey on good visualization methods.
 
 ### What I plan to do next week
-- Finish server setup and make it testable
-- Finish up backend and test server and move on to help on the front-end.
+- Further research into helping the website and its user options.
+- Decide what datasets are best represented as which graphs.
 - Help finalise what charts are the best for which form of data and test plot it
 
 ### Blocks or impediments to the plan for next week
-- Setting up some front end design and user flow
-- AWS setup is relatively tedious but nothing unmanageable
+- Setting up some front end design and user flow and data passing due to authentication issues.
 
 # Christopher
 
