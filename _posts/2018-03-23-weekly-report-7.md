@@ -24,13 +24,13 @@ title: Weekly Report 8 - Mar 19 2018 - Mar 23 2018
 
 ### What I did
 
-- Begin integration of master dataset
-- Begin developing the logic for creating the datasets that will be used for the queries
+- Work on data integration task
+- Work on exporting the trained models to interact with queries
 - Trained Sentiment models on the reference Yelp dataset provided.
 
 ### What I plan to do next week
 
-- Prepare scripts to clean if required
+- Start with server side integration
 - Begin integrating the manual datasets with our collection of data.
 
 ### Blocks or impediments to the plan for next week
