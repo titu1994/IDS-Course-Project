@@ -8,12 +8,13 @@ from staging.utils.keras_utils import prepare_yelp_reviews_dataset_keras
 from staging.utils.keras_utils import load_prepared_embedding_matrix
 from staging.utils.keras_utils import fbeta_score, TensorBoardBatch
 
-from staging.utils.sklearn_utils import SENTIMENT_CLASS_NAMES
+from staging.utils.sklearn_utils import SENTIMENT_CLASS_NAMES, SENTIMENT_CLASS_PRIORS
 from staging.utils.keras_utils import EMBEDDING_DIM, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH
 
 from keras.layers import Dense, Input
 from keras.layers import Embedding
 from keras.layers import LSTM
+from keras.layers import Dropout
 from keras.models import Model
 from keras.regularizers import l2
 from keras.optimizers import Adam
@@ -21,12 +22,12 @@ from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 
 # edit the model name
 MODEL_NAME = "lstm"
-NB_EPOCHS = 5
-BATCHSIZE = 512
-REGULARIZATION_STRENGTH = 0.0001
+NB_EPOCHS = 20
+BATCHSIZE = 128
+REGULARIZATION_STRENGTH = 0.0000
 
 # constants that dont need to be changed
-NB_SENTIMENT_CLASSES = 3
+NB_SENTIMENT_CLASSES = 2
 TIMESTAMP = time.strftime("%Y-%m-%d-%H-%M-%S")
 LOG_STAMP = construct_data_path('models/keras/sentiment/logs/%s/%s' % (MODEL_NAME, TIMESTAMP))
 WEIGHT_STAMP = construct_data_path('models/keras/sentiment/weights/%s_weights.h5' % (MODEL_NAME))
@@ -37,28 +38,28 @@ data, labels, _ = prepare_yelp_reviews_dataset_keras(reviews_path, MAX_NB_WORDS,
 
 X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size=0.1)
 
-CLASS_WEIGHTS = compute_class_weight(np.argmax(y_train, axis=-1))
-#CLASS_WEIGHTS = [10., 1, 0.01]
+CLASS_WEIGHTS = 1. / np.asarray(SENTIMENT_CLASS_PRIORS)
 print("Class weights : ", CLASS_WEIGHTS)
 
-embedding_matrix = load_prepared_embedding_matrix()
+embedding_matrix = load_prepared_embedding_matrix(finetuned=False)
 embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
                             weights=[embedding_matrix], trainable=False)
 
 input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
 x = embedding_layer(input)
-x = LSTM(MAX_SEQUENCE_LENGTH, dropout=0.2, recurrent_dropout=0.2)(x)
+x = Dropout(0.2)(x)
+x = LSTM(256)(x)
 x = Dense(NB_SENTIMENT_CLASSES, activation='softmax', kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
 
 model = Model(input, x, name=MODEL_NAME)
 model.summary()
 
-optimizer = Adam(lr=1e-3, amsgrad=True)
+optimizer = Adam(lr=5e-4, amsgrad=True)
 model.compile(optimizer, loss='categorical_crossentropy', metrics=['accuracy', fbeta_score])
 
 # build the callbacks
 checkpoint = ModelCheckpoint(WEIGHT_STAMP, monitor='val_fbeta_score', verbose=1, save_weights_only=True,
-                             save_best_only=False, mode='max')
+                             save_best_only=True, mode='max')
 tensorboard = TensorBoardBatch(LOG_STAMP, batch_size=BATCHSIZE)
 lr_scheduler = ReduceLROnPlateau(monitor='val_fbeta_score', factor=np.sqrt(0.5), patience=5, verbose=1,
                                  mode='min', min_lr=1e-5)

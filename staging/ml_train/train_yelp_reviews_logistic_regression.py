@@ -11,10 +11,10 @@ from staging.utils.sklearn_utils import SENTIMENT_CLASS_NAMES
 
 if __name__ == '__main__':
     # global constants
-    CROSS_VALIDATION = 3
+    CROSS_VALIDATION = 10
 
     # classifier hyperparameters
-    Cs = 10000 # [10., 10., 1000.]
+    Cs = 10
 
     reviews_path = resolve_data_path('datasets/yelp-reviews/reviews.csv')
     data, labels = prepare_yelp_reviews_dataset_sklearn(reviews_path, nb_sentiment_classes=2)
@@ -30,6 +30,7 @@ if __name__ == '__main__':
 
     compute_metrics(y_test, y_preds, target_names=SENTIMENT_CLASS_NAMES)
     print('Best C : ', clf.C_)
+    print('Best Cs : ', clf.Cs_)
 
     clf_path = 'models/sklearn/sentiment/logistic_regression.pkl'
     clf_path = construct_data_path(clf_path)
@@ -41,29 +42,32 @@ if __name__ == '__main__':
 """
 Vectorizer loaded from saved state !
 TF-IDF transformer loaded from saved state !
-Shape of tf-idf transformed datased :  (56383, 1575218)
-Train set size: (50744, 1575218)
-Test set size: (5639, 1575218)
-Train set class distribution : [0.32579221 0.67420779]
-Test set class distribution : [0.32576698 0.67423302]
-[Parallel(n_jobs=2)]: Done   3 out of   3 | elapsed:  3.7min remaining:    0.0s
-[Parallel(n_jobs=2)]: Done   3 out of   3 | elapsed:  3.7min finished
-Accuracy : 64.76325589643554
+Train set size: (19674, 1575218)
+Test set size: (2187, 1575218)
+Train set class distribution : [0.36006913 0.63993087]
+Test set class distribution : [0.35985368 0.64014632]
+[Parallel(n_jobs=2)]: Done   1 tasks      | elapsed:   54.2s
+[Parallel(n_jobs=2)]: Done   4 tasks      | elapsed:  1.7min
+[Parallel(n_jobs=2)]: Done  10 out of  10 | elapsed:  4.3min finished
+Accuracy : 80.93278463648834
 
 ************************* Classification Report *************************
              precision    recall  f1-score   support
 
-   negative     0.4373    0.2847    0.3449      1837
-   positive     0.7043    0.8230    0.7590      3802
+   negative     0.7673    0.6747    0.7181       787
+   positive     0.8288    0.8850    0.8560      1400
 
-avg / total     0.6173    0.6476    0.6241      5639
+avg / total     0.8067    0.8093    0.8063      2187
 
 
 ************************* Confusion Matrix *************************
 negative   positive   
-[[ 523 1314]
- [ 673 3129]]
+[[ 531  256]
+ [ 161 1239]]
 
 Best C :  [10000.]
+Best Cs :  [1.00000000e-04 7.74263683e-04 5.99484250e-03 4.64158883e-02
+ 3.59381366e-01 2.78255940e+00 2.15443469e+01 1.66810054e+02
+ 1.29154967e+03 1.00000000e+04]
 Finished training model !
 """

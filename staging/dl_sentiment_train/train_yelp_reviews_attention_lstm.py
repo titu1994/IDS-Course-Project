@@ -10,19 +10,23 @@ from staging.utils.keras_utils import fbeta_score, TensorBoardBatch
 
 from staging.utils.sklearn_utils import SENTIMENT_CLASS_NAMES, SENTIMENT_CLASS_PRIORS
 from staging.utils.keras_utils import EMBEDDING_DIM, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH
+from staging.utils.layers import AttentionLSTM
 
-from keras.layers import Dense, Input, Dropout, BatchNormalization
-from keras.layers import Embedding, GlobalAveragePooling1D, Activation
+from keras.layers import Dense, Input, BatchNormalization, Activation
+from keras.layers import Embedding, GlobalAveragePooling1D, multiply
+from keras.layers import Conv1D
+from keras.layers import Dropout, Reshape
 from keras.models import Model
 from keras.regularizers import l2
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
+from keras import backend as K
 
 # edit the model name
-MODEL_NAME = "fasttext"
-NB_EPOCHS = 30
-BATCHSIZE = 512
-REGULARIZATION_STRENGTH = 0.0051
+MODEL_NAME = "attention-lstm"
+NB_EPOCHS = 20
+BATCHSIZE = 128
+REGULARIZATION_STRENGTH = 0.0000
 
 # constants that dont need to be changed
 NB_SENTIMENT_CLASSES = 2
@@ -34,40 +38,55 @@ reviews_path = resolve_data_path('datasets/yelp-reviews/reviews.csv')
 data, labels, _ = prepare_yelp_reviews_dataset_keras(reviews_path, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH,
                                                      nb_sentiment_classes=NB_SENTIMENT_CLASSES)
 
-X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size=0.1,
-                                                         rebalance_class_distribution=False,
-                                                         cache=False)
+X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size=0.1)
 
 CLASS_WEIGHTS = 1. / np.asarray(SENTIMENT_CLASS_PRIORS)
 print("Class weights : ", CLASS_WEIGHTS)
 
 embedding_matrix = load_prepared_embedding_matrix(finetuned=False)
 embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
-                            weights=[embedding_matrix],
-                            trainable=False)
+                            weights=[embedding_matrix], trainable=False)
+
+def squeeze_excite_block(input):
+    ''' Create a squeeze-excite block
+    Args:
+        input: input tensor
+        filters: number of output filters
+        k: width factor
+
+    Returns: a keras tensor
+    '''
+    filters = K.int_shape(input)[-1] # channel_axis = -1 for TF
+
+    se = GlobalAveragePooling1D()(input)
+    se = Reshape((1, filters))(se)
+    se = Dense(filters // 16,  activation='relu', kernel_initializer='he_normal')(se)
+    se = Dense(filters, activation='sigmoid', kernel_initializer='he_normal')(se)
+    se = multiply([input, se])
+    return se
 
 input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
 x = embedding_layer(input)
 x = Dropout(0.2)(x)
-x = GlobalAveragePooling1D()(x)
+
+x = Conv1D(100, 3, padding='same', kernel_initializer='he_normal', strides=2,
+           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
+x = BatchNormalization(axis=-1)(x)
+x = Activation('relu')(x)
+x = squeeze_excite_block(x)
+
+x = AttentionLSTM(128)(x)
 
 x = Dense(512, kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
 x = BatchNormalization(axis=-1)(x)
 x = Activation('relu')(x)
-x = Dropout(0.2)(x)
-
-x = Dense(512, kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-x = BatchNormalization(axis=-1)(x)
-x = Activation('relu')(x)
-x = Dropout(0.2)(x)
 
 x = Dense(NB_SENTIMENT_CLASSES, activation='softmax', kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-#x = PriorScaling(SENTIMENT_CLASS_PRIORS)(x)
 
 model = Model(input, x, name=MODEL_NAME)
 model.summary()
 
-optimizer = Adam(lr=5e-4, amsgrad=True)
+optimizer = Adam(lr=1e-3, amsgrad=True)
 model.compile(optimizer, loss='categorical_crossentropy', metrics=['accuracy', fbeta_score])
 
 # build the callbacks
@@ -99,27 +118,3 @@ y_test = np.argmax(y_test, axis=-1)
 predictions = np.argmax(predictions, axis=-1)
 
 compute_metrics(y_test, predictions, target_names=SENTIMENT_CLASS_NAMES)
-
-# preserve the embeddings to use with other models
-embedding_weights = model.get_layer('embedding_1').get_weights()[0]
-
-embedding_path = construct_data_path('models/embeddings/finetuned_embedding_matrix.npy')
-np.save(embedding_path, embedding_matrix)
-
-'''
-Accuracy : 63.50416740556837
-
-************************* Classification Report *************************
-             precision    recall  f1-score   support
-
-   negative     0.2224    0.1439    0.1747       827
-   positive     0.6852    0.9053    0.7801      3802
-
-avg / total     0.6026    0.7693    0.6719      4629
-
-
-************************* Confusion Matrix *************************
-negative   positive   
-[[ 119  699]
- [ 308 3442]]
-'''

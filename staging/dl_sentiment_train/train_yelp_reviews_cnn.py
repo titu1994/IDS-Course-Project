@@ -23,12 +23,12 @@ from keras import backend as K
 
 # edit the model name
 MODEL_NAME = "cnn"
-NB_EPOCHS = 10
+NB_EPOCHS = 20
 BATCHSIZE = 512
 REGULARIZATION_STRENGTH = 0.0
 
 # constants that dont need to be changed
-NB_SENTIMENT_CLASSES = 3
+NB_SENTIMENT_CLASSES = 2
 TIMESTAMP = time.strftime("%Y-%m-%d-%H-%M-%S")
 LOG_STAMP = construct_data_path('models/keras/sentiment/logs/%s/%s' % (MODEL_NAME, TIMESTAMP))
 WEIGHT_STAMP = construct_data_path('models/keras/sentiment/weights/%s_weights.h5' % (MODEL_NAME))
@@ -38,13 +38,13 @@ data, labels, _ = prepare_yelp_reviews_dataset_keras(reviews_path, MAX_NB_WORDS,
                                                      nb_sentiment_classes=NB_SENTIMENT_CLASSES)
 
 X_train, y_train, X_test, y_test = create_train_test_set(data, labels, test_size=0.1,
-                                                         rebalance_class_distribution=True,
-                                                         cache=True)
+                                                         rebalance_class_distribution=False,
+                                                         cache=False)
 
 CLASS_WEIGHTS = 1. / np.asarray(SENTIMENT_CLASS_PRIORS)
 print("Class weights : ", CLASS_WEIGHTS)
 
-embedding_matrix = load_prepared_embedding_matrix(finetuned=True)
+embedding_matrix = load_prepared_embedding_matrix(finetuned=False)
 embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
                             weights=[embedding_matrix],
                             trainable=False)
@@ -73,13 +73,13 @@ input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
 x = embedding_layer(input)
 x = Dropout(0.5)(x)
 
-x = Conv1D(128, 3, padding='same', kernel_initializer='he_normal', dilation_rate=1,
+x = Conv1D(128, 8, padding='same', kernel_initializer='he_normal', dilation_rate=1,
            kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
 x = BatchNormalization(axis=-1)(x)
 x = Activation('relu')(x)
 x = squeeze_excite_block(x)
 
-x = Conv1D(128, 3, padding='same', kernel_initializer='he_normal', dilation_rate=1,
+x = Conv1D(256, 5, padding='same', kernel_initializer='he_normal', dilation_rate=1,
            kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
 x = BatchNormalization(axis=-1)(x)
 x = Activation('relu')(x)
@@ -96,12 +96,12 @@ x = Dense(NB_SENTIMENT_CLASSES, activation='softmax', kernel_regularizer=l2(REGU
 model = Model(input, x, name=MODEL_NAME)
 model.summary()
 
-optimizer = Adam(lr=1e-3, amsgrad=True)
+optimizer = Adam(lr=5e-4, amsgrad=True)
 model.compile(optimizer, loss='categorical_crossentropy', metrics=['accuracy', fbeta_score])
 
 # build the callbacks
 checkpoint = ModelCheckpoint(WEIGHT_STAMP, monitor='val_fbeta_score', verbose=1, save_weights_only=True,
-                             save_best_only=False, mode='max')
+                             save_best_only=True, mode='max')
 tensorboard = TensorBoardBatch(LOG_STAMP, batch_size=BATCHSIZE)
 lr_scheduler = ReduceLROnPlateau(monitor='val_fbeta_score', factor=np.sqrt(0.5), patience=5, verbose=1,
                                  mode='min', min_lr=1e-5)
