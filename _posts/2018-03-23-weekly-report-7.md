@@ -7,14 +7,14 @@ title: Weekly Report 8 - Mar 19 2018 - Mar 23 2018
 
 ### What I did
 
-- Worked on answering queries in Project Section 4
-- Started on manual reference datasets task
-- Used XGBoost for answering several queries
+- Finished manual reference datasets for 10 restaurants
+- Wrote scripts to extract 40 datasets from Yelp dataset that matches our criteria
+- Worked on visualization using D3
 
 ### What I plan to do next week
 
-- Finish answering queries from Project Section 4
-- Work on manual reference datasets task
+- Work on answering queries for final framework
+- Work on more viz
 
 ### Blocks or impediments to the plan for next week
 
