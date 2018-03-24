@@ -54,13 +54,13 @@ title: Weekly Report 8 - Mar 19 2018 - Mar 23 2018
 # Christopher
 
 ### What I did
-- Tested out the relevant visualization libraries.
-- Read about sentiment analysis, and ml models.
+- Work on the next deliverable, manual data set reference.,left with 3 domains
+- Decided on the initial charts to be visualised.
 
 ### What I plan to do next week
-- Work on the next deliverable, manual data set reference.
-- Decide on the charts to be visualised
-- Explore options in UI.
+- Work on the three domains left in manual data set reference.
+- Design the UI basic framework
+- Explore visualization options.
 
 ### Blocks or impediments to the plan for next week
 - Identifying the right libraries for each of the task will be an impediment.
