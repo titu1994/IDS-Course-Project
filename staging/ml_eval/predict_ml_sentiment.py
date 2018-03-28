@@ -21,7 +21,7 @@ def _preprocess_text(text):
     return tokens
 
 
-def get_decision_tree_prediction(text: str):
+def get_decision_tree_sentiment_prediction(text: str):
     global _decision_tree
 
     if _decision_tree is None:
@@ -38,7 +38,7 @@ def get_decision_tree_prediction(text: str):
     return classification, confidence
 
 
-def get_random_forest_prediction(text: str):
+def get_random_forest_sentiment_prediction(text: str):
     global _random_forest
 
     if _random_forest is None:
@@ -55,7 +55,7 @@ def get_random_forest_prediction(text: str):
     return classification, confidence
 
 
-def get_logistic_regression_prediction(text: str):
+def get_logistic_regression_sentiment_prediction(text: str):
     global _logistic_regression
 
     if _logistic_regression is None:
@@ -76,6 +76,6 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     text = "sad bad disgusting horrible"
-    label, confidence = get_logistic_regression_prediction(text)
+    label, confidence = get_logistic_regression_sentiment_prediction(text)
 
     print("Class = ", label, "Confidence:", confidence)

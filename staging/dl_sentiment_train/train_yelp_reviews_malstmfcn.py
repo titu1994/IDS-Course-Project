@@ -15,7 +15,7 @@ from staging.utils.layers import AttentionLSTM
 from keras.layers import Dense, Input, BatchNormalization, Activation
 from keras.layers import Embedding, GlobalAveragePooling1D, multiply
 from keras.layers import Conv1D
-from keras.layers import Dropout, Reshape
+from keras.layers import Dropout, Reshape, concatenate
 from keras.models import Model
 from keras.regularizers import l2
 from keras.optimizers import Adam
@@ -23,7 +23,7 @@ from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from keras import backend as K
 
 # edit the model name
-MODEL_NAME = "attention-lstm"
+MODEL_NAME = "malstm_fcn"
 NB_EPOCHS = 20
 BATCHSIZE = 128
 REGULARIZATION_STRENGTH = 0.0000
@@ -66,20 +66,41 @@ def squeeze_excite_block(input):
     return se
 
 input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
-x = embedding_layer(input)
-x = Dropout(0.2)(x)
+embed = embedding_layer(input)
+#x = Dropout(0.2)(x)
 
-x = Conv1D(100, 3, padding='same', kernel_initializer='he_normal', strides=2,
-           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
+x = Conv1D(100, 3, padding='same', kernel_initializer='he_uniform', strides=2,
+           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(embed)
 x = BatchNormalization(axis=-1)(x)
 x = Activation('relu')(x)
 x = squeeze_excite_block(x)
 
 x = AttentionLSTM(128)(x)
 
-x = Dense(512, kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-x = BatchNormalization(axis=-1)(x)
-x = Activation('relu')(x)
+y = Conv1D(128, 8, padding='same', kernel_initializer='he_uniform',
+           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(embed)
+y = BatchNormalization()(y)
+y = Activation('relu')(y)
+y = squeeze_excite_block(y)
+
+y = Conv1D(256, 5, padding='same', kernel_initializer='he_uniform',
+           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(y)
+y = BatchNormalization()(y)
+y = Activation('relu')(y)
+y = squeeze_excite_block(y)
+
+y = Conv1D(128, 3, padding='same', kernel_initializer='he_uniform',
+           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(y)
+y = BatchNormalization()(y)
+y = Activation('relu')(y)
+
+y = GlobalAveragePooling1D()(y)
+
+x = concatenate([x, y])
+
+# x = Dense(512, kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
+# x = BatchNormalization(axis=-1)(x)
+# x = Activation('relu')(x)
 
 x = Dense(NB_SENTIMENT_CLASSES, activation='softmax', kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
 
