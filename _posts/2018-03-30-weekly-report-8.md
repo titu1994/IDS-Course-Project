@@ -41,15 +41,14 @@ title: Weekly Report 9 - Mar 23 2018 - Mar 30 2018
 # Debojit
 
 ### What I did
-- Tested a few test models in the server without the front-end by sending payload from a REST client
-- Completed 2 endpoints
+- Worked on front-end designs and Plotly.js
+- Completed data deliverable
 
 ### What I plan to do next week
-- Complete more endpoint and start the documentation
-- Decide what datasets are best represented as which graphs
+- Get live maps working for heat maps
 
 ### Blocks or impediments to the plan for next week
-- Integrating custom scripts into Django and getting a working flow
+- Proper plots and gathering data from user and designing a proper flow
 
 # Christopher
 
