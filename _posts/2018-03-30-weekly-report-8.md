@@ -25,18 +25,17 @@ title: Weekly Report 9 - Mar 23 2018 - Mar 30 2018
 ### What I did
 
 - Work on data integration task
-- Work on exporting the trained models to interact with queries
-- Trained Sentiment models on the reference Yelp dataset provided.
+- Exported trained LSTM, Multiplicative LSTM models for sentiment analysis
+- Begin working on final project query solution.
 
 ### What I plan to do next week
 
-- Start with server side integration
-- Begin integrating the manual datasets with our collection of data.
+- Train models to solve the given queries
+- Export above models for the server to interact with.
 
 ### Blocks or impediments to the plan for next week
 
 - No blocks currently.
-- Expect the integration task to go over smoothly. We will assign an integration manager to oversee this task.
 
 # Debojit
 
@@ -54,7 +53,7 @@ title: Weekly Report 9 - Mar 23 2018 - Mar 30 2018
 
 ### What I did
 - Worked on the deliverable, manual data set reference., for group IDs 31-40
-- Tried basic website framework, and explored bokeh applications 
+- Tried basic website framework, and explored bokeh applications
 
 ### What I plan to do next week
 - Try out actual plots that are to be implemented.
