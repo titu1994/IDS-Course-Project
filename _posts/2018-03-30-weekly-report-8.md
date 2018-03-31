@@ -7,14 +7,14 @@ title: Weekly Report 9 - Mar 23 2018 - Mar 30 2018
 
 ### What I did
 
-- Finished manual reference datasets for 10 restaurants
-- Wrote scripts to extract 40 datasets from Yelp dataset that matches our criteria
-- Worked on visualization using D3
+- Completed final integration of 40 restaurants and exported to CSV
+- Worked on Tensorflow.js for loading pre-trained Keras models to run on web
+- Explored D3 graphs
 
 ### What I plan to do next week
 
-- Work on answering queries for final framework
-- Work on more viz
+- Work on finalizing visualization decisions
+- Lower inference time for predictive models
 
 ### Blocks or impediments to the plan for next week
 
