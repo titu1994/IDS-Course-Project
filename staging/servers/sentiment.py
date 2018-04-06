@@ -84,7 +84,7 @@ def _resolve_ml_query(model_name, query):
 
 
 def _resolve_dl_query(model_name, query):
-    if model_name not in ['lstm', 'mult_lstm']:
+    if model_name not in ['lstm', 'mult_lstm', 'malstm_fcn']:
         return flask.Response('Incorrect ml model name. Must be one of ["tree", "logistic", "forest"')
 
     if model_name == 'lstm':
@@ -92,7 +92,7 @@ def _resolve_dl_query(model_name, query):
     elif model_name == 'mult_lstm':
         sentiment, confidence = predict_dl_sentiment.get_multiplicative_lstm_sentiment_prediction(query)
     else:
-        sentiment, confidence = predict_ml_sentiment.get_random_forest_sentiment_prediction(query)
+        sentiment, confidence = predict_dl_sentiment.get_malstm_fcn_sentiment_prediction(query)
 
     if sentiment == 0:
         sentiment = 'Negative'

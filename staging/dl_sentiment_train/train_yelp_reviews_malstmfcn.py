@@ -24,8 +24,8 @@ from keras import backend as K
 
 # edit the model name
 MODEL_NAME = "malstm_fcn"
-NB_EPOCHS = 20
-BATCHSIZE = 128
+NB_EPOCHS = 10
+BATCHSIZE = 256
 REGULARIZATION_STRENGTH = 0.0000
 
 # constants that dont need to be changed
@@ -69,27 +69,27 @@ input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
 embed = embedding_layer(input)
 #x = Dropout(0.2)(x)
 
-x = Conv1D(100, 3, padding='same', kernel_initializer='he_uniform', strides=2,
+x = Conv1D(100, 3, padding='same', kernel_initializer='he_uniform', strides=3,
            kernel_regularizer=l2(REGULARIZATION_STRENGTH))(embed)
 x = BatchNormalization(axis=-1)(x)
 x = Activation('relu')(x)
 x = squeeze_excite_block(x)
 
-x = AttentionLSTM(128)(x)
+x = AttentionLSTM(64)(x)
 
-y = Conv1D(128, 8, padding='same', kernel_initializer='he_uniform',
+y = Conv1D(96, 8, padding='same', kernel_initializer='he_uniform',
            kernel_regularizer=l2(REGULARIZATION_STRENGTH))(embed)
 y = BatchNormalization()(y)
 y = Activation('relu')(y)
 y = squeeze_excite_block(y)
 
-y = Conv1D(256, 5, padding='same', kernel_initializer='he_uniform',
+y = Conv1D(192, 5, padding='same', kernel_initializer='he_uniform',
            kernel_regularizer=l2(REGULARIZATION_STRENGTH))(y)
 y = BatchNormalization()(y)
 y = Activation('relu')(y)
 y = squeeze_excite_block(y)
 
-y = Conv1D(128, 3, padding='same', kernel_initializer='he_uniform',
+y = Conv1D(96, 3, padding='same', kernel_initializer='he_uniform',
            kernel_regularizer=l2(REGULARIZATION_STRENGTH))(y)
 y = BatchNormalization()(y)
 y = Activation('relu')(y)
@@ -120,8 +120,8 @@ lr_scheduler = ReduceLROnPlateau(monitor='val_fbeta_score', factor=np.sqrt(0.5),
 callbacks = [checkpoint, tensorboard, lr_scheduler]
 
 # train model
-model.fit(X_train, y_train, batch_size=BATCHSIZE, epochs=NB_EPOCHS, verbose=1,
-          callbacks=callbacks, validation_data=(X_test, y_test), class_weight=CLASS_WEIGHTS)
+# model.fit(X_train, y_train, batch_size=BATCHSIZE, epochs=NB_EPOCHS, verbose=1,
+#           callbacks=callbacks, validation_data=(X_test, y_test), class_weight=CLASS_WEIGHTS)
 
 # load up the best weights
 model.load_weights(WEIGHT_STAMP)
