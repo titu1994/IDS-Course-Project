@@ -11,6 +11,29 @@ _logistic_regression = None
 _random_forest = None
 
 
+def _initialize():
+    global _decision_tree, _logistic_regression, _random_forest
+
+    initialization_text = "default"
+    initialization_text = _preprocess_text(initialization_text)  # will initialize the tokenizer
+
+    if _decision_tree is None:
+        path = 'models/sklearn/sentiment/decision_tree.pkl'
+        path = resolve_data_path(path)
+        _decision_tree = joblib.load(path)
+
+    if _random_forest is None:
+        path = 'models/sklearn/sentiment/random_forest.pkl'
+        path = resolve_data_path(path)
+        _random_forest = joblib.load(path)
+
+    if _logistic_regression is None:
+        path = 'models/sklearn/sentiment/logistic_regression.pkl'
+        path = resolve_data_path(path)
+        _logistic_regression = joblib.load(path)
+
+    print("Initialized machine learning models !")
+
 
 def _preprocess_text(text):
     text = clean_text(text)

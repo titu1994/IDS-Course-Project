@@ -27,6 +27,44 @@ _mlstm_model = None
 NB_SENTIMENT_CLASSES = 2
 
 
+def _initialize():
+    global _tokenizer, _embedding_matrix, _lstm_model, _mlstm_model
+
+    initialization_text = "default"
+    initialization_text = _preprocess_text(initialization_text)  # will initialize the tokenizer
+
+    if _embedding_matrix is None:
+        _embedding_matrix = load_prepared_embedding_matrix(finetuned=False)
+
+
+    if _lstm_model is None:
+        embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
+                                    weights=[_embedding_matrix], trainable=False)
+
+        input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
+        x = embedding_layer(input)
+        x = Dropout(0.2)(x)
+        x = LSTM(256)(x)
+        x = Dense(NB_SENTIMENT_CLASSES, activation='softmax')(x)
+
+        _lstm_model = Model(input, x, name="lstm_sentiment")
+        _lstm_model.predict(initialization_text)
+
+    if _mlstm_model is None:
+        embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
+                                    weights=[_embedding_matrix], trainable=False)
+
+        input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
+        x = embedding_layer(input)
+        x = MultiplicativeLSTM(128)(x)
+        x = Dense(NB_SENTIMENT_CLASSES, activation='softmax')(x)
+
+        _mlstm_model = Model(input, x, name="lstm_sentiment")
+        _mlstm_model.predict(initialization_text)
+
+    print("Initialized deep learning models !")
+
+
 def _preprocess_text(text):
     global _tokenizer
 
