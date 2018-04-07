@@ -11,6 +11,8 @@ html5lib
 requests
 joblib
 imbalanced-learn
+flask
+gevent
 pytest
 pytest-cov
 coverage
