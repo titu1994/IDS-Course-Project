@@ -12,6 +12,7 @@ from keras import backend as K
 
 from staging import resolve_data_path, construct_data_path
 from staging.utils.text_utils import prepare_yelp_reviews_dataset_keras as _prepare_yelp_reviews_dataset_keras
+from staging.utils.text_utils import prepare_yelp_ratings_dataset_keras as _prepare_yelp_ratings_dataset_keras
 
 
 EMBEDDING_DIM = 300
@@ -258,6 +259,78 @@ def prepare_yelp_reviews_dataset_keras(path: str, max_nb_words: int, max_sequenc
     texts, labels = _prepare_yelp_reviews_dataset_keras(path, nb_sentiment_classes)
 
     labels = to_categorical(labels, num_classes=nb_sentiment_classes)
+
+    tokenizer_path = 'models/keras/sentiment/tokenizer.pkl'
+    tokenizer_path = construct_data_path(tokenizer_path)
+
+    if not os.path.exists(tokenizer_path): # check if a prepared tokenizer is available
+        tokenizer = Tokenizer(num_words=max_nb_words)  # if not, create a new Tokenizer
+        tokenizer.fit_on_texts(texts)  # prepare the word index map
+
+        with open(tokenizer_path, 'wb') as f:
+            pickle.dump(tokenizer, f)  # save the prepared tokenizer for fast access next time
+
+        logging.info('Saved tokenizer.pkl')
+    else:
+        with open(tokenizer_path, 'rb') as f:  # simply load the prepared tokenizer
+            tokenizer = pickle.load(f)
+            logging.info('Loaded tokenizer.pkl')
+
+    sequences = tokenizer.texts_to_sequences(texts)  # transform text into integer indices lists
+    word_index = tokenizer.word_index  # obtain the word index map
+    logging.info('Found %d unique 1-gram tokens.' % len(word_index))
+
+    if ngram_range > 1:
+        ngram_set = set()
+        for input_list in sequences:
+            for i in range(2, ngram_range + 1):  # prepare the n-gram sentences
+                set_of_ngram = create_ngram_set(input_list, ngram_value=i)
+                ngram_set.update(set_of_ngram)
+
+        # Dictionary mapping n-gram token to a unique integer.
+        # Integer values are greater than max_features in order
+        # to avoid collision with existing features.
+        start_index = max_nb_words + 1 if max_nb_words is not None else (len(word_index) + 1)
+        token_indice = {v: k + start_index for k, v in enumerate(ngram_set)}
+        indice_token = {token_indice[k]: k for k in token_indice}
+        word_index.update(token_indice)
+
+        max_features = np.max(list(indice_token.keys())) + 1  # compute maximum number of n-gram "words"
+        logging.info('After N-gram augmentation, there are: %d features' % max_features)
+
+        # Augmenting X_train and X_test with n-grams features
+        sequences = add_ngram(sequences, token_indice, ngram_range)  # add n-gram features to original dataset
+
+    logging.debug('Average sequence length: {}'.format(np.mean(list(map(len, sequences)), dtype=int))) # compute average sequence length
+    logging.debug('Median sequence length: {}'.format(np.median(list(map(len, sequences))))) # compute median sequence length
+    logging.debug('Max sequence length: {}'.format(np.max(list(map(len, sequences))))) # compute maximum sequence length
+
+    data = pad_sequences(sequences, maxlen=max_sequence_length)  # pad the sequence to the user defined max length
+
+    return (data, labels, word_index)
+
+
+def prepare_yelp_ratings_dataset_keras(path: str, max_nb_words: int, max_sequence_length: int,
+                                       ngram_range: int=2) -> (np.ndarray, np.ndarray, Dict):
+    '''
+    Tokenize the data from sentences to list of words
+
+    Args:
+        path: resolved path to the dataset
+        max_nb_words: maximum vocabulary size in text corpus
+        max_sequence_length: maximum length of sentence
+        ngram_range: n-gram of sentences
+        nb_sentiment_classes: number of sentiment classes.
+            Can be 2 or 3 only.
+
+    Returns:
+        A list of tokenized sentences and the word index list which
+        maps words to an integer index.
+    '''
+
+    texts, labels = _prepare_yelp_ratings_dataset_keras(path)
+
+    labels = to_categorical(labels, num_classes=5)
 
     tokenizer_path = 'models/keras/sentiment/tokenizer.pkl'
     tokenizer_path = construct_data_path(tokenizer_path)

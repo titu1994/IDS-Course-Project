@@ -15,6 +15,9 @@ from staging import to_categorical, _get_predictions, construct_data_path
 SENTIMENT_CLASS_NAMES = ['negative', 'positive']
 SENTIMENT_CLASS_PRIORS = [0.36006913, 0.63993087]
 
+RATINGS_CLASS_NAMES = ['1', '2', '3', '4', '5']
+RATINGS_CLASS_PRIORS = [0.07110908, 0.09936973, 0.18959032, 0.35346142, 0.28646945]
+
 
 def create_train_test_set(X: np.ndarray, y: np.ndarray,
                           test_size: float = 0.1,
@@ -156,7 +159,13 @@ def compute_metrics(y_true: np.ndarray, y_preds: np.ndarray, target_names: List[
     print()
 
     classes_ = len(np.unique(y_true))
-    labels = None if classes_ == 2 else [0, 2]
+    if target_names is not None and len(target_names) == classes_:
+        labels = np.unique(y_true)
+    elif classes_ == 3 and target_names is not None and target_names[0] == 'negative':
+        labels = [0, 2]
+    else:
+        labels = None
+    #labels = None if classes_ == 2 else [0, 2]
 
     print('*' * 25, 'Classification Report', '*' * 25)
     report = classification_report(y_true, y_preds, labels=labels, target_names=target_names, digits=4)

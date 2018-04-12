@@ -296,6 +296,62 @@ def prepare_yelp_reviews_dataset_keras(path : str, nb_sentiment_classes : int = 
     return reviews, labels
 
 
+def prepare_yelp_ratings_dataset_sklearn(path : str) -> (np.array, np.array):
+    '''
+    Loads the yelp reviews dataset for Scikit-learn models,
+    prepares them by adding the class label and cleaning the
+    reviews, tokenize and normalize them.
+
+    Args:
+        path: resolved path to the dataset
+        nb_sentiment_classes: number of sentiment classes.
+            Can be 2 or 3 only.
+
+    Returns:
+        a tuple of (data, labels)
+    '''
+    df = load_dataset(path)
+
+    # clean the dataset of stopwords and punctuations
+    df = remove_stopwords_punctuation(df, key='review', return_sentence=True)
+
+    # extract the cleaned reviews and the classes
+    reviews = df['review']
+    labels = df['rating'].values
+
+    tokens = tokenize(reviews)
+    data = tfidf(tokens)
+
+    return data, labels
+
+
+def prepare_yelp_ratings_dataset_keras(path : str) -> (np.array, np.array):
+    '''
+    Loads the yelp reviews dataset for Scikit-learn models,
+    prepares them by adding the class label and cleaning the
+    reviews, tokenize and normalize them.
+
+    Args:
+        path: resolved path to the dataset
+        nb_sentiment_classes: number of sentiment classes.
+            Can be 2 or 3 only.
+
+    Returns:
+        a tuple of (data, labels)
+    '''
+    df = load_dataset(path)
+
+    # clean the dataset of stopwords and punctuations
+    df = remove_stopwords_punctuation(df, key='review', return_sentence=True)
+
+    # extract the cleaned reviews and the classes
+    reviews = df['review'].values
+    labels = df['rating'].values
+    labels = labels - 1
+
+    return reviews, labels
+
+
 def plot_yelp_dataset_info(df: pd.DataFrame):
     # Plot relationship of ratings and sentence length
     grid = sns.FacetGrid(data=df, col='rating')

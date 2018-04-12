@@ -20,62 +20,62 @@ from keras import backend as K
 from keras.preprocessing.sequence import pad_sequences
 
 # cache them to access faster multiple times
-_tokenizer_sentiment = None
-_embedding_matrix_sentiment = None
-_lstm_model_sentiment = None
-_mlstm_model_sentiment = None
-_malstm_fcn_model_sentiment = None
+_tokenizer_ratings = None
+_embedding_matrix_ratings = None
+_lstm_model_ratings = None
+_mlstm_model_ratings = None
+_malstm_fcn_model_ratings = None
 
-NB_SENTIMENT_CLASSES = 2
+NB_RATINGS_CLASSES = 5
 
 
 def _initialize():
-    global _tokenizer_sentiment, _embedding_matrix_sentiment, _lstm_model_sentiment, _mlstm_model_sentiment, _malstm_fcn_model_sentiment
+    global _tokenizer_ratings, _embedding_matrix_ratings, _lstm_model_ratings, _mlstm_model_ratings, _malstm_fcn_model_ratings
 
     initialization_text = "default"
     initialization_text = _preprocess_text(initialization_text)  # will initialize the tokenizer
 
-    if _embedding_matrix_sentiment is None:
-        _embedding_matrix_sentiment = load_prepared_embedding_matrix(finetuned=False)
+    if _embedding_matrix_ratings is None:
+        _embedding_matrix_ratings = load_prepared_embedding_matrix(finetuned=False)
 
 
-    if _lstm_model_sentiment is None:
+    if _lstm_model_ratings is None:
         embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
-                                    weights=[_embedding_matrix_sentiment], trainable=False)
+                                    weights=[_embedding_matrix_ratings], trainable=False)
 
         input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
         x = embedding_layer(input)
         x = Dropout(0.2)(x)
         x = LSTM(256)(x)
-        x = Dense(NB_SENTIMENT_CLASSES, activation='softmax')(x)
+        x = Dense(NB_RATINGS_CLASSES, activation='softmax')(x)
 
-        _lstm_model_sentiment = Model(input, x, name="lstm_sentiment")
+        _lstm_model_ratings = Model(input, x, name="lstm_ratings")
 
-        path = resolve_data_path('models/keras/sentiment/weights/%s_weights.h5' % ('lstm'))
-        _lstm_model_sentiment.load_weights(path)
+        path = resolve_data_path('models/keras/ratings/weights/%s_weights.h5' % ('lstm'))
+        _lstm_model_ratings.load_weights(path)
 
-        _lstm_model_sentiment.predict(initialization_text)
+        _lstm_model_ratings.predict(initialization_text)
 
-    if _mlstm_model_sentiment is None:
+    if _mlstm_model_ratings is None:
         embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
-                                    weights=[_embedding_matrix_sentiment], trainable=False)
+                                    weights=[_embedding_matrix_ratings], trainable=False)
 
         input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
         x = embedding_layer(input)
         x = MultiplicativeLSTM(128)(x)
-        x = Dense(NB_SENTIMENT_CLASSES, activation='softmax')(x)
+        x = Dense(NB_RATINGS_CLASSES, activation='softmax')(x)
 
-        _mlstm_model_sentiment = Model(input, x, name="lstm_sentiment")
+        _mlstm_model_ratings = Model(input, x, name="lstm_ratings")
 
-        path = resolve_data_path('models/keras/sentiment/weights/%s_weights.h5' % ('mlstm'))
-        _mlstm_model_sentiment.load_weights(path)
+        path = resolve_data_path('models/keras/ratings/weights/%s_weights.h5' % ('mlstm'))
+        _mlstm_model_ratings.load_weights(path)
 
-        _mlstm_model_sentiment.predict(initialization_text)
+        _mlstm_model_ratings.predict(initialization_text)
 
 
-    if _malstm_fcn_model_sentiment is None:
+    if _malstm_fcn_model_ratings is None:
         embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
-                                    weights=[_embedding_matrix_sentiment], trainable=False)
+                                    weights=[_embedding_matrix_ratings], trainable=False)
 
         input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
         embed = embedding_layer(input)
@@ -104,31 +104,31 @@ def _initialize():
 
         x = concatenate([x, y])
 
-        x = Dense(NB_SENTIMENT_CLASSES, activation='softmax')(x)
+        x = Dense(NB_RATINGS_CLASSES, activation='softmax')(x)
 
-        _malstm_fcn_model_sentiment = Model(input, x, name="malstm_fcn_sentiment")
+        _malstm_fcn_model_ratings = Model(input, x, name="malstm_fcn_ratings")
 
-        path = resolve_data_path('models/keras/sentiment/weights/%s_weights.h5' % ('malstm_fcn'))
-        _malstm_fcn_model_sentiment.load_weights(path)
+        path = resolve_data_path('models/keras/ratings/weights/%s_weights.h5' % ('malstm_fcn'))
+        _malstm_fcn_model_ratings.load_weights(path)
 
     print("Initialized deep learning models !")
 
 
 def _preprocess_text(text):
-    global _tokenizer_sentiment
+    global _tokenizer_ratings
 
     text = clean_text(text)
     text = ' '.join(text)
     texts = [text]
 
-    if _tokenizer_sentiment is None:
+    if _tokenizer_ratings is None:
         tokenizer_path = 'models/keras/sentiment/tokenizer.pkl'
         tokenizer_path = resolve_data_path(tokenizer_path)
 
         with open(tokenizer_path, 'rb') as f:  # simply load the prepared tokenizer
-            _tokenizer_sentiment = pickle.load(f)
+            _tokenizer_ratings = pickle.load(f)
 
-    sequences = _tokenizer_sentiment.texts_to_sequences(texts)  # transform text into integer indices lists
+    sequences = _tokenizer_ratings.texts_to_sequences(texts)  # transform text into integer indices lists
     data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)  # pad the sequence to the user defined max length
 
     return data
@@ -153,29 +153,29 @@ def _squeeze_excite_block(input):
     return se
 
 
-def get_lstm_sentiment_prediction(text: str):
-    global _embedding_matrix_sentiment, _lstm_model_sentiment
+def get_lstm_ratings_prediction(text: str):
+    global _embedding_matrix_ratings, _lstm_model_ratings
 
-    if _embedding_matrix_sentiment is None:
-        _embedding_matrix_sentiment = load_prepared_embedding_matrix(finetuned=False)
+    if _embedding_matrix_ratings is None:
+        _embedding_matrix_ratings = load_prepared_embedding_matrix(finetuned=False)
 
-    if _lstm_model_sentiment is None:
+    if _lstm_model_ratings is None:
         embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
-                                    weights=[_embedding_matrix_sentiment], trainable=False)
+                                    weights=[_embedding_matrix_ratings], trainable=False)
 
         input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
         x = embedding_layer(input)
         x = Dropout(0.2)(x)
         x = LSTM(256)(x)
-        x = Dense(NB_SENTIMENT_CLASSES, activation='softmax')(x)
+        x = Dense(NB_RATINGS_CLASSES, activation='softmax')(x)
 
-        _lstm_model_sentiment = Model(input, x, name="lstm_sentiment")
+        _lstm_model_ratings = Model(input, x, name="lstm_ratings")
 
-        path = resolve_data_path('models/keras/sentiment/weights/%s_weights.h5' % ('lstm'))
-        _lstm_model_sentiment.load_weights(path)
+        path = resolve_data_path('models/keras/ratings/weights/%s_weights.h5' % ('lstm'))
+        _lstm_model_ratings.load_weights(path)
 
     data = _preprocess_text(text)
-    pred = _lstm_model_sentiment.predict(data)
+    pred = _lstm_model_ratings.predict(data)
 
     classification = np.argmax(pred, axis=-1)[0]
     confidence = np.max(pred, axis=-1)[0]
@@ -183,28 +183,28 @@ def get_lstm_sentiment_prediction(text: str):
     return classification, confidence
 
 
-def get_multiplicative_lstm_sentiment_prediction(text: str):
-    global _embedding_matrix_sentiment, _mlstm_model_sentiment
+def get_multiplicative_lstm_ratings_prediction(text: str):
+    global _embedding_matrix_ratings, _mlstm_model_ratings
 
-    if _embedding_matrix_sentiment is None:
-        _embedding_matrix_sentiment = load_prepared_embedding_matrix(finetuned=False)
+    if _embedding_matrix_ratings is None:
+        _embedding_matrix_ratings = load_prepared_embedding_matrix(finetuned=False)
 
-    if _mlstm_model_sentiment is None:
+    if _mlstm_model_ratings is None:
         embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
-                                    weights=[_embedding_matrix_sentiment], trainable=False)
+                                    weights=[_embedding_matrix_ratings], trainable=False)
 
         input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
         x = embedding_layer(input)
         x = MultiplicativeLSTM(128)(x)
-        x = Dense(NB_SENTIMENT_CLASSES, activation='softmax')(x)
+        x = Dense(NB_RATINGS_CLASSES, activation='softmax')(x)
 
-        _mlstm_model_sentiment = Model(input, x, name="lstm_sentiment")
+        _mlstm_model_ratings = Model(input, x, name="lstm_ratings")
 
-        path = resolve_data_path('models/keras/sentiment/weights/%s_weights.h5' % ('mlstm'))
-        _mlstm_model_sentiment.load_weights(path)
+        path = resolve_data_path('models/keras/ratings/weights/%s_weights.h5' % ('mlstm'))
+        _mlstm_model_ratings.load_weights(path)
 
     data = _preprocess_text(text)
-    pred = _mlstm_model_sentiment.predict(data)
+    pred = _mlstm_model_ratings.predict(data)
 
     classification = np.argmax(pred, axis=-1)[0]
     confidence = np.max(pred, axis=-1)[0]
@@ -212,15 +212,15 @@ def get_multiplicative_lstm_sentiment_prediction(text: str):
     return classification, confidence
 
 
-def get_malstm_fcn_sentiment_prediction(text: str):
-    global _embedding_matrix_sentiment, _malstm_fcn_model_sentiment
+def get_malstm_fcn_ratings_prediction(text: str):
+    global _embedding_matrix_ratings, _malstm_fcn_model_ratings
 
-    if _embedding_matrix_sentiment is None:
-        _embedding_matrix_sentiment = load_prepared_embedding_matrix(finetuned=False)
+    if _embedding_matrix_ratings is None:
+        _embedding_matrix_ratings = load_prepared_embedding_matrix(finetuned=False)
 
-    if _malstm_fcn_model_sentiment is None:
+    if _malstm_fcn_model_ratings is None:
         embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
-                                    weights=[_embedding_matrix_sentiment], trainable=False)
+                                    weights=[_embedding_matrix_ratings], trainable=False)
 
         input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
         embed = embedding_layer(input)
@@ -249,15 +249,15 @@ def get_malstm_fcn_sentiment_prediction(text: str):
 
         x = concatenate([x, y])
 
-        x = Dense(NB_SENTIMENT_CLASSES, activation='softmax')(x)
+        x = Dense(NB_RATINGS_CLASSES, activation='softmax')(x)
 
-        _malstm_fcn_model_sentiment = Model(input, x, name="malstm_fcn_sentiment")
+        _malstm_fcn_model_ratings = Model(input, x, name="malstm_fcn_ratings")
 
-        path = resolve_data_path('models/keras/sentiment/weights/%s_weights.h5' % ('malstm_fcn'))
-        _malstm_fcn_model_sentiment.load_weights(path)
+        path = resolve_data_path('models/keras/ratings/weights/%s_weights.h5' % ('malstm_fcn'))
+        _malstm_fcn_model_ratings.load_weights(path)
 
     data = _preprocess_text(text)
-    pred = _malstm_fcn_model_sentiment.predict(data)
+    pred = _malstm_fcn_model_ratings.predict(data)
 
     classification = np.argmax(pred, axis=-1)[0]
     confidence = np.max(pred, axis=-1)[0]
@@ -270,16 +270,16 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     text = "This was very bad food !"
-    label, confidence = get_malstm_fcn_sentiment_prediction(text)
+    label, confidence = get_malstm_fcn_ratings_prediction(text)
 
     print("Class = ", label, "Confidence:", confidence)
 
-    text = "This was very good food !"
-    label, confidence = get_malstm_fcn_sentiment_prediction(text)
+    text = "This was very good food ! Very happy "
+    label, confidence = get_malstm_fcn_ratings_prediction(text)
 
     print("Class = ", label, "Confidence:", confidence)
 
     text = "What horrible food"
-    label, confidence = get_malstm_fcn_sentiment_prediction(text)
+    label, confidence = get_malstm_fcn_ratings_prediction(text)
 
     print("Class = ", label, "Confidence:", confidence)
