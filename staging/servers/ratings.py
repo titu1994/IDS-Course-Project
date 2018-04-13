@@ -4,8 +4,8 @@ sys.path.insert(0, "..")
 import flask
 from flask import request
 
-from staging.ml_eval import predict_ml_sentiment
-from staging.dl_eval import predict_dl_sentiment
+from staging.ml_eval import predict_ml_ratings
+from staging.dl_eval import predict_dl_ratings
 
 # initialize the server
 app = flask.Flask(__name__)
@@ -14,19 +14,19 @@ app = flask.Flask(__name__)
 print("Please wait while the models are being initialized for fast inference ! \n"
       "This may take several minutes...")
 
-predict_ml_sentiment._initialize()
-predict_dl_sentiment._initialize()
+predict_ml_ratings._initialize()
+predict_dl_ratings._initialize()
 
 print("Server is ready !")
 
 
 @app.route('/')
 def default():
-    return "Sentiment Server Initialized"
+    return "Rating Server Initialized"
 
 
-@app.route('/sentiment/ml', methods=['POST'])
-def predict_sentiment_ml():
+@app.route('/rating/ml', methods=['POST'])
+def predict_rating_ml():
     if request.json is None:
         return flask.abort(400)
 
@@ -42,8 +42,8 @@ def predict_sentiment_ml():
     return _resolve_ml_query(ml_model, query)
 
 
-@app.route('/sentiment/dl', methods=['POST'])
-def predict_sentiment_dl():
+@app.route('/rating/dl', methods=['POST'])
+def predict_rating_dl():
     if request.json is None:
         return flask.abort(400)
 
@@ -64,19 +64,14 @@ def _resolve_ml_query(model_name, query):
         return flask.Response('Incorrect ml model name. Must be one of ["tree", "logistic", "forest"')
 
     if model_name == 'tree':
-        sentiment, confidence = predict_ml_sentiment.get_decision_tree_sentiment_prediction(query)
+        rating, confidence = predict_ml_ratings.get_decision_tree_rating_prediction(query)
     elif model_name == 'logistic':
-        sentiment, confidence = predict_ml_sentiment.get_logistic_regression_sentiment_prediction(query)
+        rating, confidence = predict_ml_ratings.get_logistic_regression_rating_prediction(query)
     else:
-        sentiment, confidence = predict_ml_sentiment.get_random_forest_sentiment_prediction(query)
-
-    if sentiment == 0:
-        sentiment = 'Negative'
-    else:
-        sentiment = 'Positive'
+        rating, confidence = predict_ml_ratings.get_random_forest_rating_prediction(query)
 
     response = {
-        'sentiment': sentiment,
+        'rating': int(rating),
         'confidence': confidence,
     }
 
@@ -85,22 +80,17 @@ def _resolve_ml_query(model_name, query):
 
 def _resolve_dl_query(model_name, query):
     if model_name not in ['lstm', 'mult_lstm', 'malstm_fcn']:
-        return flask.Response('Incorrect ml model name. Must be one of ["lstm", "mult_lstm", "malstm_fcn"')
+        return flask.Response('Incorrect ml model name. Must be one of ["lstm", "mult_lstm", "malstm_fcn"'])
 
     if model_name == 'lstm':
-        sentiment, confidence = predict_dl_sentiment.get_lstm_sentiment_prediction(query)
+        rating, confidence = predict_dl_ratings.get_lstm_ratings_prediction(query)
     elif model_name == 'mult_lstm':
-        sentiment, confidence = predict_dl_sentiment.get_multiplicative_lstm_sentiment_prediction(query)
+        rating, confidence = predict_dl_ratings.get_multiplicative_lstm_ratings_prediction(query)
     else:
-        sentiment, confidence = predict_dl_sentiment.get_malstm_fcn_sentiment_prediction(query)
-
-    if sentiment == 0:
-        sentiment = 'Negative'
-    else:
-        sentiment = 'Positive'
+        rating, confidence = predict_dl_ratings.get_malstm_fcn_ratings_prediction(query)
 
     response = {
-        'sentiment': sentiment,
+        'rating': int(rating),
         'confidence': float(confidence),
     }
 
@@ -112,4 +102,4 @@ if __name__ == '__main__':
     import logging
     logging.basicConfig(level=logging.INFO)
 
-    app.run(host='localhost', port=9000)
+    app.run(host='localhost', port=9001)

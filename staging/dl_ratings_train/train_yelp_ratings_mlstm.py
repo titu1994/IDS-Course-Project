@@ -10,21 +10,20 @@ from staging.utils.keras_utils import fbeta_score, TensorBoardBatch
 
 from staging.utils.sklearn_utils import RATINGS_CLASS_NAMES, RATINGS_CLASS_PRIORS
 from staging.utils.keras_utils import EMBEDDING_DIM, MAX_NB_WORDS, MAX_SEQUENCE_LENGTH
-from staging.utils.layers import AttentionLSTM
 
-from keras.layers import Dense, Input, BatchNormalization, Activation
-from keras.layers import Embedding, GlobalAveragePooling1D, multiply
-from keras.layers import Conv1D
-from keras.layers import LSTM, Dropout, Reshape, concatenate
+from staging.utils.layers import MultiplicativeLSTM
+
+from keras.layers import Dense, Input
+from keras.layers import Embedding
+from keras.layers import Dropout
 from keras.models import Model
 from keras.regularizers import l2
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
-from keras import backend as K
 
 # edit the model name
-MODEL_NAME = "malstm_fcn"
-NB_EPOCHS = 30
+MODEL_NAME = "mlstm"
+NB_EPOCHS = 20
 BATCHSIZE = 128
 REGULARIZATION_STRENGTH = 0.0000
 
@@ -46,61 +45,10 @@ embedding_matrix = load_prepared_embedding_matrix(finetuned=False)
 embedding_layer = Embedding(MAX_NB_WORDS, EMBEDDING_DIM, mask_zero=False,
                             weights=[embedding_matrix], trainable=False)
 
-def squeeze_excite_block(input):
-    ''' Create a squeeze-excite block
-    Args:
-        input: input tensor
-        filters: number of output filters
-        k: width factor
-
-    Returns: a keras tensor
-    '''
-    filters = K.int_shape(input)[-1] # channel_axis = -1 for TF
-
-    se = GlobalAveragePooling1D()(input)
-    se = Reshape((1, filters))(se)
-    se = Dense(filters // 16,  activation='relu', kernel_initializer='he_normal')(se)
-    se = Dense(filters, activation='sigmoid', kernel_initializer='he_normal')(se)
-    se = multiply([input, se])
-    return se
-
 input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
-embed = embedding_layer(input)
+x = embedding_layer(input)
 #x = Dropout(0.2)(x)
-
-# x = Conv1D(100, 3, padding='same', kernel_initializer='he_uniform', strides=2,
-#            kernel_regularizer=l2(REGULARIZATION_STRENGTH))(embed)
-# x = BatchNormalization(axis=-1)(x)
-# x = Activation('relu')(x)
-# x = squeeze_excite_block(x)
-
-x = LSTM(256)(embed)
-
-y = Conv1D(128, 8, padding='same', kernel_initializer='he_uniform',
-           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(embed)
-y = BatchNormalization()(y)
-y = Activation('relu')(y)
-y = squeeze_excite_block(y)
-
-y = Conv1D(256, 5, padding='same', kernel_initializer='he_uniform',
-           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(y)
-y = BatchNormalization()(y)
-y = Activation('relu')(y)
-y = squeeze_excite_block(y)
-
-y = Conv1D(128, 3, padding='same', kernel_initializer='he_uniform',
-           kernel_regularizer=l2(REGULARIZATION_STRENGTH))(y)
-y = BatchNormalization()(y)
-y = Activation('relu')(y)
-
-y = GlobalAveragePooling1D()(y)
-
-x = concatenate([x, y])
-
-# x = Dense(512, kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
-# x = BatchNormalization(axis=-1)(x)
-# x = Activation('relu')(x)
-
+x = MultiplicativeLSTM(128)(x)
 x = Dense(NB_RATINGS_CLASSES, activation='softmax', kernel_regularizer=l2(REGULARIZATION_STRENGTH))(x)
 
 model = Model(input, x, name=MODEL_NAME)
