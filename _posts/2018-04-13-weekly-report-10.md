@@ -42,14 +42,14 @@ title: Weekly Report 1- - April 07 2018 - April 13 2018
 # Debojit
 
 ### What I did
-- Worked on front-end designs and Plotly.js
-- Completed data deliverable
+- Constructed scripts in python for cons=olidating mutiple csv.
+- Finished classes for machine learning
 
 ### What I plan to do next week
-- Get live maps working for heat maps
+- Visualizations
 
 ### Blocks or impediments to the plan for next week
-- Proper plots and gathering data from user and designing a proper flow
+- None right now
 
 # Christopher
 
