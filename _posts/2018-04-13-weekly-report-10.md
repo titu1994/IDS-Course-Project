@@ -24,14 +24,16 @@ title: Weekly Report 1- - April 07 2018 - April 13 2018
 
 ### What I did
 
-- Work on data integration task
-- Exported trained LSTM, Multiplicative LSTM models for sentiment analysis
-- Begin working on final project query solution.
+- Finished training models for Ratings of Yelp Reviews
+- Finished setting up Flask server to host the Sentiment Classification models
+- Finished setting up Flask server to host the Rating Classification models.
+- Improved training for models
+- Cached server side data to improve runtime at expense of more memory usage
 
 ### What I plan to do next week
 
-- Train models to solve the given queries
-- Export above models for the server to interact with.
+- Finish the queries
+- Provide a simple set of instructions to run custom data to get classification scores on them.
 
 ### Blocks or impediments to the plan for next week
 
@@ -52,7 +54,7 @@ title: Weekly Report 1- - April 07 2018 - April 13 2018
 # Christopher
 
 ### What I did
-- Working on the quieries that are set for the next deliveerable , Query 8 
+- Working on the quieries that are set for the next deliveerable , Query 8
 - Tried basic website framework, and explored the stlying options available.
 - Imported and understood work done bu other team members
 
