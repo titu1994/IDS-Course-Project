@@ -7,14 +7,14 @@ title: Weekly Report 1- - April 07 2018 - April 13 2018
 
 ### What I did
 
-- Completed final integration of 40 restaurants and exported to CSV
-- Worked on Tensorflow.js for loading pre-trained Keras models to run on web
-- Explored D3 graphs
+- Worked on gathering Census data from Census.gov using their REST api
+- Researched backend deployment details
+- Explored ways to maximize automation
 
 ### What I plan to do next week
 
-- Work on finalizing visualization decisions
-- Lower inference time for predictive models
+- Finish queries as required
+- Determine the full workflow of the system
 
 ### Blocks or impediments to the plan for next week
 
