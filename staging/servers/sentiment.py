@@ -85,7 +85,7 @@ def _resolve_ml_query(model_name, query):
 
 def _resolve_dl_query(model_name, query):
     if model_name not in ['lstm', 'mult_lstm', 'malstm_fcn']:
-        return flask.Response('Incorrect ml model name. Must be one of ["lstm", "mult_lstm", "malstm_fcn]"')
+        return flask.Response('Incorrect dl model name. Must be one of ["lstm", "mult_lstm", "malstm_fcn]"')
 
     if model_name == 'lstm':
         sentiment, confidence = predict_dl_sentiment.get_lstm_sentiment_prediction(query)
