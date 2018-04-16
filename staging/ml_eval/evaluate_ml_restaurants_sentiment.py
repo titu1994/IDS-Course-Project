@@ -1,5 +1,10 @@
 import numpy as np
 import pandas as pd
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_style('white')
+
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -106,12 +111,20 @@ if __name__ == '__main__':
 
     dataframe.to_csv(df_path, index=None)
 
-
     # compute the f1 scores of ratings here itself
     compute_metrics(labels, predicted_reviews, SENTIMENT_CLASS_NAMES)
     compute_metrics(ratings, predicted_ratings, RATINGS_CLASS_NAMES)
 
-
-
+    """
+    Query :
+    
+    Identify how the sentiments relate to the review rating by plotting average ratings against most frequent overall sentiments.
+    Sentiment labels, Average Review Rating
+    """
+    sns.countplot(x='ReviewRating', hue='SentimentLabels', data=dataframe,
+                  palette=sns.color_palette('RdBu', n_colors=2), saturation=1.0)
+    plt.xlabel('Review Ratings')
+    plt.ylabel('Instance Counts')
+    plt.show()
 
 
