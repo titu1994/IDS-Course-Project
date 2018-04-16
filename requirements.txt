@@ -2,6 +2,8 @@ numpy
 scipy
 pandas
 scikit-learn
+tensorflow>=1.4
+keras>=2.1.5
 matplotlib
 seaborn
 scrapy
@@ -16,3 +18,4 @@ gevent
 pytest
 pytest-cov
 coverage
+textblob
