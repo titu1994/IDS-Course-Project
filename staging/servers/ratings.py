@@ -71,8 +71,8 @@ def _resolve_ml_query(model_name, query):
         rating, confidence = predict_ml_ratings.get_random_forest_rating_prediction(query)
 
     response = {
-        'rating': int(rating),
-        'confidence': confidence,
+        'rating': int(rating[0]),
+        'confidence': confidence[0],
     }
 
     return flask.jsonify(**response)
@@ -90,8 +90,8 @@ def _resolve_dl_query(model_name, query):
         rating, confidence = predict_dl_ratings.get_malstm_fcn_ratings_prediction(query)
 
     response = {
-        'rating': int(rating),
-        'confidence': float(confidence),
+        'rating': int(rating[0]),
+        'confidence': float(confidence[0]),
     }
 
     return flask.jsonify(**response)

@@ -1,5 +1,5 @@
 import numpy as np
-import joblib
+from typing import Union
 import pickle
 
 from staging import resolve_data_path
@@ -114,7 +114,7 @@ def _initialize():
     print("Initialized deep learning models !")
 
 
-def _preprocess_text(text):
+def _preprocess_text(text: str):
     global _tokenizer_ratings
 
     text = clean_text(text)
@@ -153,7 +153,7 @@ def _squeeze_excite_block(input):
     return se
 
 
-def get_lstm_ratings_prediction(text: str):
+def get_lstm_ratings_prediction(text: Union[str, np.ndarray], preprocess: bool=True):
     global _embedding_matrix_ratings, _lstm_model_ratings
 
     if _embedding_matrix_ratings is None:
@@ -174,16 +174,20 @@ def get_lstm_ratings_prediction(text: str):
         path = resolve_data_path('models/keras/ratings/weights/%s_weights.h5' % ('lstm'))
         _lstm_model_ratings.load_weights(path)
 
-    data = _preprocess_text(text)
-    pred = _lstm_model_ratings.predict(data)
+    if preprocess:
+        data = _preprocess_text(text)
+    else:
+        data = text
 
-    classification = np.argmax(pred, axis=-1)[0]
-    confidence = np.max(pred, axis=-1)[0]
+    pred = _lstm_model_ratings.predict(data, batch_size=128)
+
+    classification = np.argmax(pred, axis=-1)
+    confidence = np.max(pred, axis=-1)
 
     return classification, confidence
 
 
-def get_multiplicative_lstm_ratings_prediction(text: str):
+def get_multiplicative_lstm_ratings_prediction(text: Union[str, np.ndarray], preprocess: bool=True):
     global _embedding_matrix_ratings, _mlstm_model_ratings
 
     if _embedding_matrix_ratings is None:
@@ -203,16 +207,20 @@ def get_multiplicative_lstm_ratings_prediction(text: str):
         path = resolve_data_path('models/keras/ratings/weights/%s_weights.h5' % ('mlstm'))
         _mlstm_model_ratings.load_weights(path)
 
-    data = _preprocess_text(text)
-    pred = _mlstm_model_ratings.predict(data)
+    if preprocess:
+        data = _preprocess_text(text)
+    else:
+        data = text
 
-    classification = np.argmax(pred, axis=-1)[0]
-    confidence = np.max(pred, axis=-1)[0]
+    pred = _mlstm_model_ratings.predict(data, batch_size=128)
+
+    classification = np.argmax(pred, axis=-1)
+    confidence = np.max(pred, axis=-1)
 
     return classification, confidence
 
 
-def get_malstm_fcn_ratings_prediction(text: str):
+def get_malstm_fcn_ratings_prediction(text: Union[str, np.ndarray], preprocess: bool=True):
     global _embedding_matrix_ratings, _malstm_fcn_model_ratings
 
     if _embedding_matrix_ratings is None:
@@ -256,11 +264,15 @@ def get_malstm_fcn_ratings_prediction(text: str):
         path = resolve_data_path('models/keras/ratings/weights/%s_weights.h5' % ('malstm_fcn'))
         _malstm_fcn_model_ratings.load_weights(path)
 
-    data = _preprocess_text(text)
-    pred = _malstm_fcn_model_ratings.predict(data)
+    if preprocess:
+        data = _preprocess_text(text)
+    else:
+        data = text
 
-    classification = np.argmax(pred, axis=-1)[0]
-    confidence = np.max(pred, axis=-1)[0]
+    pred = _malstm_fcn_model_ratings.predict(data, batch_size=128)
+
+    classification = np.argmax(pred, axis=-1)
+    confidence = np.max(pred, axis=-1)
 
     return classification, confidence
 

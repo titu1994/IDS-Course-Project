@@ -1,5 +1,6 @@
 import numpy as np
 import joblib
+from typing import Union
 
 from staging import resolve_data_path
 from staging.utils.text_utils import clean_text, tokenize, tfidf
@@ -35,7 +36,7 @@ def _initialize():
     print("Initialized machine learning models !")
 
 
-def _preprocess_text(text):
+def _preprocess_text(text: str):
     text = clean_text(text)
     text = ' '.join(text)
     texts = [text]
@@ -44,7 +45,7 @@ def _preprocess_text(text):
     return tokens
 
 
-def get_decision_tree_sentiment_prediction(text: str):
+def get_decision_tree_sentiment_prediction(text: Union[str, np.ndarray], preprocess: bool=True):
     global _decision_tree_sentiment
 
     if _decision_tree_sentiment is None:
@@ -52,16 +53,19 @@ def get_decision_tree_sentiment_prediction(text: str):
         path = resolve_data_path(path)
         _decision_tree_sentiment = joblib.load(path)
 
-    tokens = _preprocess_text(text)
+    if preprocess:
+        tokens = _preprocess_text(text)
+    else:
+        tokens = text
 
     pred = _get_predictions(_decision_tree_sentiment, tokens)
-    confidence = np.max(pred, axis=-1)[0]
-    classification = np.argmax(pred, axis=-1)[0]
+    confidence = np.max(pred, axis=-1)
+    classification = np.argmax(pred, axis=-1)
 
     return classification, confidence
 
 
-def get_random_forest_sentiment_prediction(text: str):
+def get_random_forest_sentiment_prediction(text: Union[str, np.ndarray], preprocess: bool=True):
     global _random_forest_sentiment
 
     if _random_forest_sentiment is None:
@@ -69,16 +73,19 @@ def get_random_forest_sentiment_prediction(text: str):
         path = resolve_data_path(path)
         _random_forest_sentiment = joblib.load(path)
 
-    tokens = _preprocess_text(text)
+    if preprocess:
+        tokens = _preprocess_text(text)
+    else:
+        tokens = text
 
     pred = _get_predictions(_random_forest_sentiment, tokens)
-    confidence = np.max(pred, axis=-1)[0]
-    classification = np.argmax(pred, axis=-1)[0]
+    confidence = np.max(pred, axis=-1)
+    classification = np.argmax(pred, axis=-1)
 
     return classification, confidence
 
 
-def get_logistic_regression_sentiment_prediction(text: str):
+def get_logistic_regression_sentiment_prediction(text: Union[str, np.ndarray], preprocess: bool=True):
     global _logistic_regression_sentiment
 
     if _logistic_regression_sentiment is None:
@@ -86,11 +93,14 @@ def get_logistic_regression_sentiment_prediction(text: str):
         path = resolve_data_path(path)
         _logistic_regression_sentiment = joblib.load(path)
 
-    tokens = _preprocess_text(text)
+    if preprocess:
+        tokens = _preprocess_text(text)
+    else:
+        tokens = text
 
     pred = _get_predictions(_logistic_regression_sentiment, tokens)
-    confidence = np.max(pred, axis=-1)[0]
-    classification = np.argmax(pred, axis=-1)[0]
+    confidence = np.max(pred, axis=-1)
+    classification = np.argmax(pred, axis=-1)
 
     return classification, confidence
 

@@ -32,7 +32,7 @@ def load_dataset(path : str) -> pd.DataFrame:
     Returns:
         pandas dataframe
     '''
-    df = pd.read_csv(path, header=0, encoding='utf-8', index_col='id')
+    df = pd.read_csv(path, header=0, encoding='utf-8', index_col='id', error_bad_lines=False)
     return df
 
 
@@ -267,7 +267,7 @@ def prepare_yelp_reviews_dataset_sklearn(path : str, nb_sentiment_classes : int 
     return data, labels
 
 
-def prepare_yelp_reviews_dataset_keras(path : str, nb_sentiment_classes : int = 3) -> (np.array, np.array):
+def prepare_yelp_reviews_dataset_keras(path : str, nb_sentiment_classes : int = 2) -> (np.array, np.array):
     '''
     Loads the yelp reviews dataset for Scikit-learn models,
     prepares them by adding the class label and cleaning the
@@ -377,7 +377,8 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     #reviews_path = resolve_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
-    reviews_path = resolve_data_path('raw/yelp-reviews/reviews_60601-60606.csv')
+    #reviews_path = resolve_data_path('raw/yelp-reviews/reviews_60601-60606.csv')
+    reviews_path = resolve_data_path('datasets/yelp-reviews/reviews_100k.csv')
     #prepare_yelp_reviews_dataset_sklearn(reviews_path, nb_sentiment_classes=3)
 
     df = pd.read_csv(reviews_path, header=0, encoding='utf-8', error_bad_lines=False)

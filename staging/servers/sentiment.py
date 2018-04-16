@@ -76,8 +76,8 @@ def _resolve_ml_query(model_name, query):
         sentiment = 'Positive'
 
     response = {
-        'sentiment': sentiment,
-        'confidence': confidence,
+        'sentiment': sentiment[0],
+        'confidence': float(confidence[0]),
     }
 
     return flask.jsonify(**response)
@@ -100,8 +100,8 @@ def _resolve_dl_query(model_name, query):
         sentiment = 'Positive'
 
     response = {
-        'sentiment': sentiment,
-        'confidence': float(confidence),
+        'sentiment': sentiment[0],
+        'confidence': float(confidence[0]),
     }
 
     return flask.jsonify(**response)

@@ -239,7 +239,7 @@ def add_ngram(sequences: List, token_indice: Dict, ngram_range: int=2) -> List:
 
 
 def prepare_yelp_reviews_dataset_keras(path: str, max_nb_words: int, max_sequence_length: int,
-                                       ngram_range: int=2, nb_sentiment_classes: int=3) -> (np.ndarray, np.ndarray, Dict):
+                                       ngram_range: int=2, nb_sentiment_classes: int=2) -> (np.ndarray, np.ndarray, Dict):
     '''
     Tokenize the data from sentences to list of words
 
@@ -391,7 +391,7 @@ if __name__ == '__main__':
     # construct the tokenizer
     data, labels, word_index = prepare_yelp_reviews_dataset_keras(reviews_path, max_nb_words=MAX_NB_WORDS,
                                                                   max_sequence_length=MAX_SEQUENCE_LENGTH,
-                                                                  nb_sentiment_classes=3)
+                                                                  nb_sentiment_classes=2)
 
     # construct the actual embedding matrix
     embedding_matrix = load_embedding_matrix(word_index, MAX_NB_WORDS, EMBEDDING_DIM)
