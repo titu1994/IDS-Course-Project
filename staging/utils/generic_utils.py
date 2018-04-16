@@ -2,6 +2,7 @@ import os
 import numpy as np
 
 
+
 def resolve_data_path(path):
     path1 = "../data/" + path
     if os.path.exists(path1):

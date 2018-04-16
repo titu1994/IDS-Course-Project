@@ -1,6 +1,9 @@
 import numpy as np
 import time
 
+import sys
+sys.path.insert(0, "..")
+
 from staging import construct_data_path, resolve_data_path
 from staging.utils.sklearn_utils import compute_metrics, create_train_test_set, compute_class_weight
 

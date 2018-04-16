@@ -3,6 +3,9 @@ import joblib
 import logging
 logging.basicConfig(level=logging.INFO)
 
+import sys
+sys.path.insert(0, "..")
+
 from staging import resolve_data_path
 
 from staging.dl_eval.predict_dl_sentiment import get_lstm_sentiment_prediction

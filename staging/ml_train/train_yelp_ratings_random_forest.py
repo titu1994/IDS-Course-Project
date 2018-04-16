@@ -1,6 +1,9 @@
 import joblib
 import numpy as np
 
+import sys
+sys.path.insert(0, "..")
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 

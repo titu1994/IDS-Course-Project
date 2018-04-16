@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 
+import sys
+sys.path.insert(0, "..")
+
 import re
 
 from staging import construct_data_path, resolve_data_path

@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import re
 
+import sys
+sys.path.insert(0, "..")
+
 from staging import construct_data_path, resolve_data_path
 
 basepath = "raw/yelp/"

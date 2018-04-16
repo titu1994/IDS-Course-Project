@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 from urllib.request import unquote
 
+import sys
+sys.path.insert(0, "..")
+
 from staging import resolve_data_path, construct_data_path
 
 # restaurant_names = ['The Dearborn', 'Stock and Ledger', 'Remingtons', 'Roanoke Restaurant', 'The Gage', 'The Marq',

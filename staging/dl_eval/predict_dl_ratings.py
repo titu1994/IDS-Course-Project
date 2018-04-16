@@ -2,6 +2,9 @@ import numpy as np
 from typing import Union
 import pickle
 
+import sys
+sys.path.insert(0, "..")
+
 from staging import resolve_data_path
 from staging.utils.text_utils import clean_text
 from staging.utils.keras_utils import load_prepared_embedding_matrix

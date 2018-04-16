@@ -7,6 +7,9 @@ from typing import Dict
 import logging
 logging.basicConfig(level=logging.INFO)
 
+import sys
+sys.path.insert(0, "..")
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_style('white')

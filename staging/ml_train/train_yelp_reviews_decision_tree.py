@@ -1,6 +1,9 @@
 import joblib
 import numpy as np
 
+import sys
+sys.path.insert(0, "..")
+
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
 

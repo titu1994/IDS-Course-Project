@@ -3,6 +3,9 @@ np.random.seed(0)
 
 import matplotlib.pyplot as plt
 
+import sys
+sys.path.insert(0, "..")
+
 from staging import construct_data_path
 from staging.utils.optimization_utils import load_optimization_data
 

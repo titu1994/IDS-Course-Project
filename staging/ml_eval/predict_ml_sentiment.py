@@ -2,6 +2,9 @@ import numpy as np
 import joblib
 from typing import Union
 
+import sys
+sys.path.insert(0, "..")
+
 from staging import resolve_data_path
 from staging.utils.text_utils import clean_text, tokenize, tfidf
 from staging.utils.sklearn_utils import _get_predictions

@@ -1,6 +1,9 @@
 import joblib
 import numpy as np
 
+import sys
+sys.path.insert(0, "..")
+
 from sklearn.linear_model import LogisticRegressionCV
 
 from staging import resolve_data_path, construct_data_path
