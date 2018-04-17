@@ -117,3 +117,5 @@ if __name__ == '__main__':
     save_path = construct_data_path(save_path)
 
     aggregate_df.to_csv(save_path, encoding='utf-8', index_label='id')
+
+    print("Finished saving files.")
