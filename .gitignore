@@ -114,3 +114,6 @@ ENV/
 .mypy_cache/
 
 staging/**/.*
+
+# For query_datasets
+staging/query_datasets/.*
