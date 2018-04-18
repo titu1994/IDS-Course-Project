@@ -103,10 +103,13 @@ close to 1.2 GB in size. This is the reason this is not attached. If needed, ple
 the drive folder provided and place them in the following directories
 
 > ML MODELS : 'data/models/sklearn/ratings/*.pkl' where * is the ml model name ;
+
 > ML DEPENDENCIES : 'data/models/sklearn-utils/*.pkl' where * is the tfidf and vectorizer pickles
 
 > DL MODELS : 'data/models/keras/ratings/weights/*.h5' where * is the dl model name ;
+
 > DL MODELS : 'data/models/embeddings/*.npy' where * is the embedding matrix name
+
 > DL MODELS : 'data/models/keras/sentiment/tokenizer.pkl' for the serialized Keras Tokenizer
 
 For predictions, you need a csv file of the review text, which also contains the ratings.
