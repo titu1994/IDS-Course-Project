@@ -99,7 +99,7 @@ for retrieving the scores.
 ## NOTE
 
 For prediction from pretrained models, you need the pretrained weights of the models, which for Logistic Regression (ML default) is
-close to 1.2 GB in size. This is the reason this is not attached. If needed, please download the Logistic Model and the DL models from
+close to 6.5 GB in size. This is the reason this is not attached. If needed, please download the Logistic Model and the DL models from
 the drive folder provided and place them in the following directories
 
 > ML MODELS : 'data/models/sklearn/ratings/*.pkl' where * is the ml model name ;
@@ -123,6 +123,12 @@ directory structure and filename.
 
 Foe ease of replication, the file should be placed in:
 > 'data/datasets/yelp-reviews/reviews.csv'
+
+If you only need to check our models, the Deep Learning models are much smaller, and faster to evaluate. However,
+note that Logistic Regression is heavily positive biased and therefore it's scores will be higher in f1 ratings etc.
+
+All of the deep learning models are trained to be unbiased estimators, and therefore while their raw f1 scores are lesser,
+they are more intuitive in their understanding of the queries and predicting scores. Please keep this in mind when judging the models.
 
 
 # Q10
