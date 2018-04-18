@@ -106,6 +106,21 @@ OUTPUT : For direct inference, you get fast f1 score metrics calculation along w
 For prediction from pretrained models, they generate appropriate csv files that need to be parsed by `q7.py`
 for retrieving the scores.
 
+# Q8
+
+INPUT: python queries/q1.py [Food_Inspections.csv] [Business_Licenses.csv]
+
+where	Food_Inspections= input crimes dataset
+	Business_Licenses.csv = input business licenses dataset
+
+OUTPUT: q8.csv [approx 10MB]
+
+All datasets are pre-filtered by ZIPCODE on data.cityofchicago.org.
+ZIPCODE range: [60601-60607]
+
+No columns need to be filtered, everything is filtered in code.
+
+
 ## NOTE
 
 For prediction from pretrained models, you need the pretrained weights of the models, which for Logistic Regression (ML default) is
