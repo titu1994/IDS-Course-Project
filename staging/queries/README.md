@@ -66,6 +66,16 @@ The average rating fall is approximately 0.5 for PASS W/ CONDITIONS and approxim
 
 INPUT : python queries/q5.py
 
+NOTE: On Windows, command line terminal does not allow unicode characters on python 3.5 or below (this is fixed in 3.6).
+
+> If you are on Windows on Python 3.5 or lower, please use the below command BEFORE launching the above python script in this order:
+
+```
+> set PYTHONIOENCODING=:replace
+
+> python queries/q5.py
+```
+
 We do not accept command line arguments for this query, and instead choose to show the list of unique restaurants and then
 ask the user at runtime to provide a restaurant name, so that the user can choose an appropriate restaurant from given selection.
 
