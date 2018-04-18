@@ -109,6 +109,18 @@ the drive folder provided and place them in the following directories
 > DL MODELS : 'data/models/embeddings/*.npy' where * is the embedding matrix name
 > DL MODELS : 'data/models/keras/sentiment/tokenizer.pkl' for the serialized Keras Tokenizer
 
+For predictions, you need a csv file of the review text, which also contains the ratings.
+The primary major columns that it should contain, with the exact same names are :
+
+- review : The review text
+- rating : the 1 - 5 rating scale in integer format
+
+The filename inside the `path` variable at the top of `q7_ml.py` and `q7_dl.py` need to be changed to match the
+directory structure and filename.
+
+Foe ease of replication, the file should be placed in:
+> 'data/datasets/yelp-reviews/reviews.csv'
+
 
 # Q10
 
