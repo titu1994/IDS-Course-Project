@@ -19,3 +19,4 @@ pytest
 pytest-cov
 coverage
 textblob
+usaddress

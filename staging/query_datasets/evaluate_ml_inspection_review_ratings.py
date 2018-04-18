@@ -2,15 +2,12 @@ import numpy as np
 import pandas as pd
 
 import sys
-
 sys.path.insert(0, "..")
 
 import seaborn as sns
-
 sns.set_style('white')
 
 import logging
-
 logging.basicConfig(level=logging.INFO)
 
 from staging import resolve_data_path, construct_data_path
