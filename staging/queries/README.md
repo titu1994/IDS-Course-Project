@@ -110,7 +110,7 @@ for retrieving the scores.
 
 INPUT: python queries/q1.py [Food_Inspections.csv] [Business_Licenses.csv]
 
-where	Food_Inspections= input crimes dataset
+where	Food_Inspections= input Food Inspection dataset
 	Business_Licenses.csv = input business licenses dataset
 
 OUTPUT: q8.csv [approx 10MB]
@@ -119,6 +119,20 @@ All datasets are pre-filtered by ZIPCODE on data.cityofchicago.org.
 ZIPCODE range: [60601-60607]
 
 No columns need to be filtered, everything is filtered in code.
+
+# Q9
+
+INPUT: python queries/q1.py [Business_Licenses.csv] [Crimes.csv]
+
+where	Crimes= input crimes dataset
+	Business_Licenses.csv = input business licenses dataset
+
+OUTPUT: q9_final.csv [approx 10MB]
+
+All datasets are pre-filtered by ZIPCODE on data.cityofchicago.org.
+ZIPCODE range: [60601-60607]
+
+Buisness Licenses filter to have liquor, everything is filtered in code.
 
 
 ## NOTE
