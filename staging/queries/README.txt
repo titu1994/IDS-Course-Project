@@ -24,3 +24,14 @@ All datasets are pre-filtered by ZIPCODE on data.cityofchicago.org.
 ZIPCODE range: [60601-60607]
 
 No columns need to be filtered, everything is filtered in code.
+
+Q10
+
+INPUT: Replace line 16 with appropriate crime.csv filename and extension, line 34 with weather.csv
+
+All datasets are pre-filtered by ZIPCODE on data.cityofchicag.org
+ZIPCODE range: [60601-60607]
+
+No columns need to be filtered, everything is filtered in code.
+
+Census data is queried from CENSUS API.
