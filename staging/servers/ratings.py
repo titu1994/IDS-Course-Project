@@ -102,4 +102,4 @@ if __name__ == '__main__':
     import logging
     logging.basicConfig(level=logging.INFO)
 
-    app.run(host='localhost', port=9001)
+    app.run(host='0.0.0.0', port=9001)
