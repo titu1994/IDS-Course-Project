@@ -66,7 +66,7 @@
 		$('#result').removeClass("alert alert-warning");
 		$('#result').removeClass("alert alert-danger");
 		$('#result').removeClass("alert alert-success");
-			$.post('/sentiment/dl',{message: messageTxt},function(result){
+			$.post('/sentiment-page',{message: messageTxt},function(result){
 				if(result.subjectivity === 'N'){
 					$('#result').addClass("alert alert-danger")	.text(messageTxt + " (" + result.polarity + ")");
 				} else {

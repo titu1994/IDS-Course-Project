@@ -16,7 +16,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/sentiment/dl', methods=['POST'])
+@app.route('/sentiment-page', methods=['POST'])
 def sentiment():
     print("Message", request.form['message'])
     post_fields = {'model_name': 'lstm',
