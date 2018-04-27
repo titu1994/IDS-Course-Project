@@ -22,15 +22,16 @@ def sentiment():
                    'query': request.form['message']}
 
     sentiment = requests.post(API_URL_SENTIMENT, json=post_fields)
-    # rating = requests.post(API_URL_RATINGS, json=post_fields)
+    rating = requests.post(API_URL_RATINGS, json=post_fields)
 
     sentiment = json.loads(sentiment.text)
-    # rating = json.loads(rating.text)
+    rating = json.loads(rating.text)
 
     sentiment_class, sentiment_confidence = sentiment['sentiment'], sentiment['confidence']
-    # rating_class, rating_confidence = int(rating['rating']) + 1, rating['confidence']
+    rating_class, rating_confidence = int(rating['rating']) + 1, rating['confidence']
 
-    response = {'polarity': sentiment_confidence, 'subjectivity': sentiment_class}
+    response = {'polarity': sentiment_confidence, 'subjectivity': sentiment_class,
+                'rating_polarity': rating_confidence, 'rating_subjectivity': rating_class}
     return jsonify(response)
 
 
