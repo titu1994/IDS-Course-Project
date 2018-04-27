@@ -1,7 +1,7 @@
 import sys
 sys.path.insert(0, "..")
 
-from staging.servers.sentiment import app
+from staging.servers.sentiment import app as application
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=9000, debug=False)
+    application.run()
