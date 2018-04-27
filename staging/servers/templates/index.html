@@ -68,9 +68,9 @@
 		$('#result').removeClass("alert alert-success");
 			$.post('/sentiment-page',{message: messageTxt},function(result){
 				if(result.subjectivity === 'N'){
-					$('#result').addClass("alert alert-danger")	.text(messageTxt + " Sentiment Strength (" + result.polarity + ") Rating : " + result.rating_subjectivity + " Strength : (" + result.rating_polarity + ")");
+					$('#result').addClass("alert alert-danger")	.text(messageTxt + ":: Sentiment Strength (" + result.polarity + ")");
 				} else {
-					$('#result').addClass("alert alert-success").text(messageTxt + " Sentiment Strength (" + result.polarity + ") Rating : " + result.rating_subjectivity + " Strength : (" + result.rating_polarity + ")");
+					$('#result').addClass("alert alert-success").text(messageTxt + ":: Sentiment Strength (" + result.polarity + ")");
 				}
 			});
 	});
