@@ -18,7 +18,6 @@ def index():
 
 @app.route('/sentiment-page', methods=['POST'])
 def sentiment():
-    print("Message", request.form['message'])
     post_fields = {'model_name': 'lstm',
                    'query': request.form['message']}
 
