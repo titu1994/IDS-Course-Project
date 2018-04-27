@@ -3,12 +3,14 @@ sys.path.insert(0, "..")
 
 import flask
 from flask import request
+from flask_cors import CORS
 
 # from staging.ml_eval import predict_ml_sentiment
 from staging.dl_eval import predict_dl_sentiment
 
 # initialize the server
 app = flask.Flask(__name__)
+CORS(app)
 
 # initialize the models completely
 print("Please wait while the models are being initialized for fast inference ! \n"

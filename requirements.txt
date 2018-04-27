@@ -14,6 +14,7 @@ requests
 joblib
 imbalanced-learn
 flask
+flask-cors
 gevent
 pytest
 pytest-cov
