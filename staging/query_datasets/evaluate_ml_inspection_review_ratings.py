@@ -105,6 +105,10 @@ if __name__ == '__main__':
         'PassWConditions': '#Conditional',
     })
 
+    # average statistics computed from the training set.
+    aggregate_df.loc[aggregate_df['#Fail'] != 0, 'AverageYelpRating'] -= 1.22549560
+    aggregate_df.loc[aggregate_df['#Conditional'] != 0, 'AverageYelpRating'] -= 0.42569482
+
     print(aggregate_df.info())
     print()
 

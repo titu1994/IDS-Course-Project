@@ -376,10 +376,10 @@ if __name__ == '__main__':
     from staging import resolve_data_path
     logging.basicConfig(level=logging.INFO)
 
-    #reviews_path = resolve_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
-    #reviews_path = resolve_data_path('raw/yelp-reviews/reviews_60601-60606.csv')
+    #ratings_path = resolve_data_path('raw/yelp-reviews/cleaned_yelp_reviews.csv')
+    #ratings_path = resolve_data_path('raw/yelp-reviews/reviews_60601-60606.csv')
     reviews_path = resolve_data_path('datasets/yelp-reviews/reviews_100k.csv')
-    #prepare_yelp_reviews_dataset_sklearn(reviews_path, nb_sentiment_classes=3)
+    #prepare_yelp_reviews_dataset_sklearn(ratings_path, nb_sentiment_classes=3)
 
     df = pd.read_csv(reviews_path, header=0, encoding='utf-8', error_bad_lines=False)
 

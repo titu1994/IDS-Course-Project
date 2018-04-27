@@ -24,6 +24,11 @@ if __name__ == '__main__':
 
     print(df.info())
 
+    output_path = 'results/yelp/plot_data.csv'
+    output_path = construct_data_path(output_path)
+
+    df.to_csv(output_path, index_label='id', encoding='utf-8')
+
     """
     Query :
 
